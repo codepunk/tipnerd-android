@@ -16,18 +16,20 @@
 
 package com.codepunk.tipnerd
 
-import org.junit.Test
+import android.app.Application
+import android.content.Context
+import dagger.hilt.android.HiltAndroidApp
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-import org.junit.Assert.*
+@HiltAndroidApp
+class TipnerdApp : Application() {
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
+    // region Variables
+
+    // Delete when https://github.com/google/dagger/issues/3601 is resolved.
+    @Inject @ApplicationContext lateinit var context: Context
+
+    // endregion Variables
+
 }
