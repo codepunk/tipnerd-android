@@ -45,10 +45,63 @@ android {
         }
 
         buildConfigField(
+            type = "String",
+            name = "APPLICATION_NAME",
+            value = "\"Tipnerd\""
+        )
+
+        buildConfigField(
             type = "long",
             name = "OK_HTTP_CLIENT_CACHE_SIZE",
             value = "10 * 1024 * 1024"
         )
+
+        buildConfigField(
+            type = "String",
+            name = "DATABASE_NAME",
+            value = "\"tipnerd_db\""
+        )
+
+        buildConfigField(
+            type = "String",
+            name = "PREFERENCES_DATASTORE_NAME",
+            value = "\"tipnerd_preferences\""
+        )
+
+        buildConfigField(
+            type = "String",
+            name = "USER_SETTINGS_DATASTORE_FILENAME",
+            value = "\"tipnerd_user_settings.json\""
+        )
+
+        /*
+         * Pull private values from gradle.properties
+         * (See http://www.rainbowbreeze.it/environmental-variables-api-key-and-secret-buildconfig-and-android-studio/)
+         * (Also see https://medium.com/@ericfu/securely-storing-secrets-in-an-android-application-501f030ae5a3
+         *  for info about using KeyStore)
+         */
+        val tipnerdLocalClientIdProp = if (project.hasProperty("TipnerdLocalClientIdProp")) {
+            "\"${project.property("TipnerdLocalClientIdProp")}\""
+        } else {
+            "/**** Define Tipnerd Local Client Id ****/ \"\""
+        }
+        buildConfigField(
+            type = "String",
+            name = "TIPNERD_LOCAL_CLIENT_ID",
+            value = tipnerdLocalClientIdProp
+        )
+
+        val tipnerdLocalClientSecretProp = if (project.hasProperty("TipnerdLocalClientSecretProp")) {
+            "\"${project.property("TipnerdLocalClientSecretProp")}\""
+        } else {
+            "/**** Define Tipnerd Local Secret Id ****/ \"\""
+        }
+        buildConfigField(
+            type = "String",
+            name = "TIPNERD_LOCAL_CLIENT_SECRET",
+            value = tipnerdLocalClientSecretProp
+        )
+
     }
 
     buildTypes {
@@ -68,6 +121,28 @@ android {
 
     kotlinOptions {
         jvmTarget = "17"
+    }
+
+    flavorDimensions += "version"
+
+    productFlavors {
+        create("production") {
+            dimension = "version"
+            buildConfigField(
+                type = "String",
+                name = "BASE_URL",
+                value = "\"https://www.tipnerd.com/\""
+            )
+        }
+        create("local") {
+            dimension = "version"
+            applicationIdSuffix = ".local"
+            buildConfigField(
+                type = "String",
+                name = "BASE_URL",
+                value = "\"http://localhost/\""
+            )
+        }
     }
 
     buildFeatures {
@@ -164,4 +239,9 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.networking)
     implementation(libs.coil.gif)
+
+    // Credentials
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.credentials)
+
 }

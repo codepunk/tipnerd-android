@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.data
+package com.codepunk.tipnerd.ui.compose.screen.main
 
-import com.codepunk.tipnerd.domain.TipnerdRepository
-
-class TipnerdRepositoryImpl : TipnerdRepository
+data class MainState(
+    val dummy: Boolean = false
+)

@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.domain
+package com.codepunk.tipnerd.di.module
 
-interface TipnerdRepository
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+
+@Module
+@InstallIn(SingletonComponent::class)
+class LocalModule {
+
+    // region Methods
+
+    // TODO Room stuff
+
+    // endregion Methods
+
+}

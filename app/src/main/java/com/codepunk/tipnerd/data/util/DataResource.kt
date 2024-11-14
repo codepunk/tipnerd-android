@@ -1,4 +1,4 @@
-package com.codepunk.tipnerd.data
+package com.codepunk.tipnerd.data.util
 
 import arrow.core.Either
 import arrow.core.Ior

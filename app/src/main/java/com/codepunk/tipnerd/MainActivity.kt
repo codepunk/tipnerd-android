@@ -20,58 +20,51 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.activity.viewModels
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.codepunk.tipnerd.manager.UserSessionManager
+import com.codepunk.tipnerd.ui.compose.Navigation
+import com.codepunk.tipnerd.ui.compose.Route
+import com.codepunk.tipnerd.ui.compose.screen.splash.SplashViewModel
 import com.codepunk.tipnerd.ui.theme.TipnerdTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    // Region methods
+    // region Variables
+
+    @Inject
+    lateinit var userSessionManager: UserSessionManager
+
+    private val splashViewModel: SplashViewModel by viewModels()
+
+    // endregion Variables
+
+    // Region Methods
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        splashScreen.setKeepOnScreenCondition { splashViewModel.isLoading.value }
+
         enableEdgeToEdge()
         setContent {
             TipnerdTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                val authenticated = true // userSession.value is Authenticated
+                Navigation(
+                    startDestination = if (authenticated) {
+                        Route.Main
+                    } else {
+                        Route.Auth
+                    }
+                )
             }
         }
     }
 
     // endregion Methods
 
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text(
-            text = "Hello $name!",
-            modifier = modifier.align(Alignment.Center)
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TipnerdTheme {
-        Greeting("Android")
-    }
 }
