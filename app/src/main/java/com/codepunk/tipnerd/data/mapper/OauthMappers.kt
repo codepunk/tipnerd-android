@@ -16,24 +16,15 @@
 
 package com.codepunk.tipnerd.data.mapper
 
-import com.codepunk.tipnerd.data.remote.entity.RemoteOauthErrorResponse
 import com.codepunk.tipnerd.data.remote.entity.RemoteOauthGrantType
 import com.codepunk.tipnerd.data.remote.entity.RemoteOauthTokenType
 import com.codepunk.tipnerd.domain.model.OauthGrantType
 import com.codepunk.tipnerd.domain.model.OauthTokenType
-import com.codepunk.tipnerd.domain.repository.OauthException
 
 // region Methods
 
 fun OauthGrantType.toRemote(): RemoteOauthGrantType = RemoteOauthGrantType.valueOf(this.name)
 
 fun RemoteOauthTokenType.toDomain(): OauthTokenType = OauthTokenType.valueOf(this.name)
-
-fun RemoteOauthErrorResponse.toException(): OauthException = OauthException(
-    error = error,
-    description = errorDescription,
-    hint = hint,
-    message = message
-)
 
 // endregion Methods

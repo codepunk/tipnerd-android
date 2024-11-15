@@ -16,9 +16,17 @@
 
 package com.codepunk.tipnerd.di.module
 
+import android.content.Context
+import androidx.room.Room
+import com.codepunk.tipnerd.BuildConfig
+import com.codepunk.tipnerd.data.local.TipnerdDatabase
+import com.codepunk.tipnerd.data.local.dao.UserDao
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -26,7 +34,18 @@ class LocalModule {
 
     // region Methods
 
-    // TODO Room stuff
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): TipnerdDatabase =
+        Room.databaseBuilder(
+            context = context,
+            klass = TipnerdDatabase::class.java,
+            name = BuildConfig.DATABASE_NAME
+        ).build()
+
+    @Provides
+    @Singleton
+    fun provideUserDao(database: TipnerdDatabase): UserDao = database.userDao()
 
     // endregion Methods
 

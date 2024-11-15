@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.data.remote.entity
+package com.codepunk.tipnerd.util.extension
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 
-@Serializable
-data class RemoteOauthToken(
-    @SerialName("token_type")
-    val tokenType: RemoteOauthTokenType = RemoteOauthTokenType.BEARER,
-    @SerialName("expires_in")
-    val expiresIn: Long = 0,
-    @SerialName("access_token")
-    val accessToken: String = "",
-    @SerialName("refresh_token")
-    val refreshToken: String = ""
-)
+// region Methods
+
+fun ConnectivityManager.isConnected(): Boolean {
+    val network = activeNetwork ?: return false
+    val capabilities = getNetworkCapabilities(network) ?: return false
+    return when {
+        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+        else -> false
+    }
+}
+
+// endregion Methods

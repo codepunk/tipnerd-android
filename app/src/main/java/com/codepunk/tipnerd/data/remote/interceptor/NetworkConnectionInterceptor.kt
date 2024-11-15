@@ -1,8 +1,8 @@
 package com.codepunk.tipnerd.data.remote.interceptor
 
 import android.net.ConnectivityManager
-import com.codepunk.tipnerd.util.extensions.isConnected
-import com.codepunk.tipnerd.util.http.NoConnectivityException
+import com.codepunk.tipnerd.util.extension.isConnected
+import com.codepunk.tipnerd.util.exception.NoConnectivityException
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package com.codepunk.tipnerd.util.http
+package com.codepunk.tipnerd.util.exception
 
 import java.io.IOException
 

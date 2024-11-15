@@ -17,8 +17,10 @@
 package com.codepunk.tipnerd.domain.repository
 
 import arrow.core.Either
+import arrow.core.Ior
 import com.codepunk.tipnerd.domain.model.OauthGrantType
 import com.codepunk.tipnerd.domain.model.OauthToken
+import com.codepunk.tipnerd.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface TipnerdRepository {
@@ -30,11 +32,16 @@ interface TipnerdRepository {
         username: String,
         password: String,
         scope: String
-    ): Flow<Either<OauthException, OauthToken>>
+    ): Flow<Either<Exception, OauthToken>>
 
     fun login(
         username: String,
         password: String
-    ): Flow<Either<OauthException, OauthToken>>
+    ): Flow<Either<Exception, OauthToken>>
+
+    fun authenticate(
+        userId: Long,
+        oauthToken: OauthToken
+    ): Flow<Ior<Exception, User?>>
 
 }

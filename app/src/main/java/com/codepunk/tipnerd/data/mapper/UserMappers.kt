@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.data.remote.entity
+package com.codepunk.tipnerd.data.mapper
 
-import kotlinx.serialization.SerialName
+import com.codepunk.tipnerd.data.local.entity.LocalUser
+import com.codepunk.tipnerd.data.remote.entity.RemoteUser
+import com.codepunk.tipnerd.domain.model.User
 
-data class RemoteOauthErrorResponse(
-    val error: String = "",
-    @SerialName("error_description")
-    val errorDescription: String = "",
-    val hint: String = "",
-    val message: String = ""
+fun RemoteUser.toLocal(): LocalUser = LocalUser(
+    id = id,
+    name = name,
+    username = username,
+    createdAt = createdAt,
+    updatedAt = updatedAt
+)
+
+fun LocalUser.toDomain(): User = User(
+    id = id,
+    name = name,
+    username = username,
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )

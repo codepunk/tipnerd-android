@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.data.remote.entity
+package com.codepunk.tipnerd.data.local.entity
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
-@Serializable
-data class RemoteOauthToken(
-    @SerialName("token_type")
-    val tokenType: RemoteOauthTokenType = RemoteOauthTokenType.BEARER,
-    @SerialName("expires_in")
-    val expiresIn: Long = 0,
-    @SerialName("access_token")
-    val accessToken: String = "",
-    @SerialName("refresh_token")
-    val refreshToken: String = ""
+@Entity(tableName = "user")
+data class LocalUser(
+    @PrimaryKey(autoGenerate = false)
+    val id: Long = -1L,
+    val name: String = "",
+    val username: String = "",
+    @ColumnInfo(name = "created_at")
+    val createdAt: Instant = Clock.System.now(),
+    @ColumnInfo(name = "updated_at")
+    val updatedAt: Instant = Clock.System.now()
 )

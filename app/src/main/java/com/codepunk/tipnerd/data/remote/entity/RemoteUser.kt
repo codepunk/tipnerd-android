@@ -16,17 +16,21 @@
 
 package com.codepunk.tipnerd.data.remote.entity
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.serializers.InstantIso8601Serializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RemoteOauthToken(
-    @SerialName("token_type")
-    val tokenType: RemoteOauthTokenType = RemoteOauthTokenType.BEARER,
-    @SerialName("expires_in")
-    val expiresIn: Long = 0,
-    @SerialName("access_token")
-    val accessToken: String = "",
-    @SerialName("refresh_token")
-    val refreshToken: String = ""
+data class RemoteUser(
+    val id: Long = -1L,
+    val name: String = "",
+    val username: String = "",
+    @SerialName("created_at")
+    @Serializable(with = InstantIso8601Serializer::class)
+    val createdAt: Instant = Clock.System.now(),
+    @SerialName("updated_at")
+    @Serializable(with = InstantIso8601Serializer::class)
+    val updatedAt: Instant = Clock.System.now()
 )

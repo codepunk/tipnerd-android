@@ -17,11 +17,13 @@
 package com.codepunk.tipnerd.data.remote.entity
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * An enumerated class that represents how an auth token will be generated and presented for
  * OAuth calls.
  */
+@Serializable
 enum class RemoteOauthTokenType {
 
     // region Values

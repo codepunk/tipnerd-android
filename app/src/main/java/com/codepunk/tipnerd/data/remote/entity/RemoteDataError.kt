@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.util.extensions
+package com.codepunk.tipnerd.data.remote.entity
 
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-// region Methods
-
-fun ConnectivityManager.isConnected(): Boolean {
-    val network = activeNetwork ?: return false
-    val capabilities = getNetworkCapabilities(network) ?: return false
-    return when {
-        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-        else -> false
-    }
-}
-
-// endregion Methods
+@Serializable
+data class RemoteDataError(
+    val error: String = "",
+    @SerialName("error_description")
+    val errorDescription: String = "",
+    val hint: String = "",
+    val message: String = ""
+)

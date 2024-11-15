@@ -18,7 +18,6 @@ package com.codepunk.tipnerd.ui.compose.screen.auth
 
 import arrow.core.Either
 import com.codepunk.tipnerd.domain.model.OauthToken
-import com.codepunk.tipnerd.domain.repository.OauthException
 
 data class AuthState(
 
@@ -37,9 +36,9 @@ data class AuthState(
     // Events/results
 
     val isLoginResultFresh: Boolean = false,
-    val loginResult: Either<OauthException, OauthToken>? = null,
+    val loginResult: Either<Exception, OauthToken>? = null,
 
     val isRegisterResultFresh: Boolean = false,
-    val registerResult: Either<OauthException, Unit>? = null
+    val registerResult: Either<Exception, Unit>? = null
 
 )

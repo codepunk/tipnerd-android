@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.data.remote.entity
+package com.codepunk.tipnerd.data.mapper
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.codepunk.tipnerd.data.remote.entity.RemoteDataError
+import com.codepunk.tipnerd.domain.model.DataError
 
-@Serializable
-data class RemoteOauthToken(
-    @SerialName("token_type")
-    val tokenType: RemoteOauthTokenType = RemoteOauthTokenType.BEARER,
-    @SerialName("expires_in")
-    val expiresIn: Long = 0,
-    @SerialName("access_token")
-    val accessToken: String = "",
-    @SerialName("refresh_token")
-    val refreshToken: String = ""
+// region Methods
+
+fun RemoteDataError.toDomain(): DataError = DataError(
+    error = error,
+    errorDescription = errorDescription,
+    hint = hint,
+    message = message
 )
+
+// endregion Methods

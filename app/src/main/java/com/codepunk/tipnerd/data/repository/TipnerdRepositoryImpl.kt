@@ -17,22 +17,31 @@
 package com.codepunk.tipnerd.data.repository
 
 import arrow.core.Either
+import arrow.core.Ior
 import arrow.core.left
 import com.codepunk.tipnerd.BuildConfig
+import com.codepunk.tipnerd.data.local.TipnerdDatabase
+import com.codepunk.tipnerd.data.local.dao.UserDao
 import com.codepunk.tipnerd.data.mapper.toDomain
-import com.codepunk.tipnerd.data.mapper.toException
+import com.codepunk.tipnerd.data.mapper.toLocal
 import com.codepunk.tipnerd.data.mapper.toRemote
 import com.codepunk.tipnerd.data.util.networkDataResource
 import com.codepunk.tipnerd.data.remote.webservice.TipnerdWebservice
+import com.codepunk.tipnerd.data.util.cachedDataResource
 import com.codepunk.tipnerd.domain.model.OauthGrantType
 import com.codepunk.tipnerd.domain.model.OauthToken
-import com.codepunk.tipnerd.domain.repository.OauthException
+import com.codepunk.tipnerd.domain.model.User
+import com.codepunk.tipnerd.util.exception.DataException
 import com.codepunk.tipnerd.domain.repository.TipnerdRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class TipnerdRepositoryImpl(
+    private val database: TipnerdDatabase,
     private val webservice: TipnerdWebservice
 ) : TipnerdRepository {
+
+    private val userDao: UserDao by lazy { database.userDao() }
 
     // region Methods
     override fun oauthToken(
@@ -42,7 +51,7 @@ class TipnerdRepositoryImpl(
         username: String,
         password: String,
         scope: String
-    ): Flow<Either<OauthException, OauthToken>> =
+    ): Flow<Either<Exception, OauthToken>> =
         networkDataResource(
             fetch = {
                 try {
@@ -53,27 +62,42 @@ class TipnerdRepositoryImpl(
                         username = username,
                         password = password,
                         scope = scope
-                    ).run {
-                        body.mapLeft { it.toException() }
-                    }
-                } catch (cause: Throwable) {
-                    OauthException(cause = cause).left()
-                }
+                    ).body.mapLeft { DataException(it.toDomain()) }
+                } catch (e: Exception) { e.left() }
             }
-        ) {
-            it.toDomain()
-        }
+        ) { it.toDomain() }
 
     override fun login(
         username: String,
         password: String
-    ): Flow<Either<OauthException, OauthToken>> = oauthToken(
+    ): Flow<Either<Exception, OauthToken>> = oauthToken(
         grantType = OauthGrantType.PASSWORD,
         clientId = BuildConfig.TIPNERD_LOCAL_CLIENT_ID,
         clientSecret = BuildConfig.TIPNERD_LOCAL_CLIENT_SECRET,
         username = username,
         password = password,
         scope = DEFAULT_SCOPE
+    )
+
+    override fun authenticate(
+        userId: Long,
+        oauthToken: OauthToken
+    ): Flow<Ior<Exception, User?>> = cachedDataResource(
+        query = {
+            userDao.getUser(userId = userId).map { it?.toDomain() }
+        },
+        fetch = {
+            try {
+                webservice.getUser(
+                    authorization = "Bearer ${oauthToken.accessToken}"
+                ).body.mapLeft { DataException(it.toDomain()) }
+            } catch (e: Exception) {
+                // TODO If there's an error here, we might need to
+                //  try getting a new auth token etc.
+                e.left()
+            }
+        },
+        saveFetchResult = { userDao.insertUser(it.toLocal()) }
     )
 
     // endregion Methods

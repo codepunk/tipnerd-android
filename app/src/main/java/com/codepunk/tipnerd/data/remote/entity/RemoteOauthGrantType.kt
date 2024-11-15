@@ -17,7 +17,9 @@
 package com.codepunk.tipnerd.data.remote.entity
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class RemoteOauthGrantType(
     /**
      * The string value associated with the grant type.

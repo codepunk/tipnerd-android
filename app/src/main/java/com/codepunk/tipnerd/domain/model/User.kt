@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.data.remote.entity
+package com.codepunk.tipnerd.domain.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
-@Serializable
-data class RemoteOauthToken(
-    @SerialName("token_type")
-    val tokenType: RemoteOauthTokenType = RemoteOauthTokenType.BEARER,
-    @SerialName("expires_in")
-    val expiresIn: Long = 0,
-    @SerialName("access_token")
-    val accessToken: String = "",
-    @SerialName("refresh_token")
-    val refreshToken: String = ""
+data class User(
+    val id: Long = -1L,
+    val name: String = "",
+    val username: String = "",
+    val createdAt: Instant = Clock.System.now(),
+    val updatedAt: Instant = Clock.System.now()
 )

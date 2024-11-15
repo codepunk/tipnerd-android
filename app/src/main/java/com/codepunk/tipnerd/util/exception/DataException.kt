@@ -14,47 +14,48 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.domain.repository
+package com.codepunk.tipnerd.util.exception
 
-class OauthException : Exception {
+import com.codepunk.tipnerd.domain.model.DataError
+
+class DataException : Exception {
 
     // region Variables
 
-    val error: String
-
-    val description: String
-
-    val hint: String
+    val dataError: DataError
 
     // endregion Variables
 
     // region Constructors
 
     constructor(
-        error: String = "",
-        description: String = "",
-        hint: String = "",
-        message: String = ""
+        message: String,
+        dataError: DataError,
     ) : super(message) {
-        this.error = error
-        this.description = description
-        this.hint = hint
+        this.dataError = dataError
     }
 
     constructor(
-        error: String = "",
-        description: String = "",
-        hint: String = "",
-        message: String = "",
+        message: String,
+        dataError: DataError,
         cause: Throwable
     ) : super(
         message,
         cause
     ) {
-        this.error = error
-        this.description = description
-        this.hint = hint
+        this.dataError = dataError
     }
+
+    constructor(dataError: DataError) : this(
+        message = dataError.message,
+        dataError = dataError
+    )
+
+    constructor(dataError: DataError, cause: Throwable) : this(
+        message = dataError.message,
+        dataError = dataError,
+        cause = cause
+    )
 
     // endregion Constructors
 
