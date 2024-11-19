@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2024 Codepunk, LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,13 +15,10 @@
   -->
 
 <resources>
-    <string name="app_name">Tipnerd</string>
 
-    <string name="email">Email</string>
-    <string name="log_in">Log In</string>
-    <string name="name">Name</string>
-    <string name="password">Password</string>
-    <string name="register">Register</string>
-    <string name="username">Username</string>
-    <string name="verify_password">Verify password</string>
+    <string name="content_app_name">Tipnerd</string>
+    <string name="content_back">Back</string>
+    <string name="content_hide_password">Hide password</string>
+    <string name="content_show_password">Show password</string>
+
 </resources>

@@ -287,6 +287,7 @@ val fixedSizes = FixedSizeScheme(
     paddingLarge = paddingLarge,
     paddingXLarge = paddingXLarge,
     padding2xLarge = padding2xLarge,
+    padding3xLarge = padding3xLarge,
     component2xSmall = component2xSmall,
     componentXSmall = componentXSmall,
     componentSmall = componentSmall,

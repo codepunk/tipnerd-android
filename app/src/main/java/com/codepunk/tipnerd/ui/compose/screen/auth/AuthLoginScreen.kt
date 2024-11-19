@@ -19,7 +19,6 @@ package com.codepunk.tipnerd.ui.compose.screen.auth
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,7 +26,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,40 +35,27 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.codepunk.tipnerd.R
 import com.codepunk.tipnerd.ui.compose.common.showErrorSnackBar
 import com.codepunk.tipnerd.ui.compose.preview.ScreenPreviews
 import com.codepunk.tipnerd.ui.theme.LocalSizes
 import com.codepunk.tipnerd.ui.theme.TipnerdTheme
+import com.codepunk.tipnerd.ui.theme.util.currentWindowAdaptiveInfoCustom
 import com.codepunk.tipnerd.util.exception.HttpStatusException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,8 +68,6 @@ fun AuthSignInScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-    var showRegionPicker by rememberSaveable { mutableStateOf(false) }
-    val modalBottomSheetState: SheetState = rememberModalBottomSheetState()
 
     // Do the following when login result is "fresh"
     if (state.isLoginResultFresh) {
@@ -109,163 +94,77 @@ fun AuthSignInScreen(
         }
     }
 
+    val windowWidthSizeClass = currentWindowAdaptiveInfoCustom().windowSizeClass.windowWidthSizeClass
+    val outerPadding = when (windowWidthSizeClass) {
+        WindowWidthSizeClass.COMPACT -> LocalSizes.current.paddingLarge
+        WindowWidthSizeClass.MEDIUM -> LocalSizes.current.paddingXLarge
+        WindowWidthSizeClass.EXPANDED -> LocalSizes.current.padding2xLarge
+        else -> LocalSizes.current.paddingLarge
+    }
+
     Scaffold(
         modifier = modifier,
-        /*
         topBar = {
-            HollarHypeTopAppBar(
-                onNavigateUp = { onEvent(AuthEvent.NavigateUp) }
+            TopAppBar(
+                title = {
+                    Text(stringResource(R.string.log_in))
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { onEvent(AuthEvent.NavigateUp) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = stringResource(id = R.string.content_back)
+                        )
+                    }
+                }
             )
         },
-         */
         snackbarHost = { SnackbarHost(snackBarHostState) }
-    ) { innerPadding ->
-        var passwordVisible by rememberSaveable { mutableStateOf(false) }
-        val layoutMargin = LocalSizes.current.padding2xLarge.times(2)
+    ) { paddingValues ->
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(paddingValues)
                 .padding(
-                    start = layoutMargin,
-                    end = layoutMargin
+                    start = outerPadding,
+                    end = outerPadding
                 ),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 modifier = Modifier
                     .widthIn(max = LocalSizes.current.region2xLarge)
-                    .fillMaxWidth()
-                    .padding(
-                        bottom = LocalSizes.current.paddingXLarge
-                    ),
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement
-                    .spacedBy(LocalSizes.current.paddingLarge)
+                verticalArrangement = Arrangement.spacedBy(
+                    space = LocalSizes.current.paddingLarge,
+                    alignment = Alignment.CenterVertically
+                )
             ) {
-                /*
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                )
-
-                val phoneNumberError = state.loginResult?.leftOrNull()
-                    ?.errors?.getOrNull(0) ?: ""
-
-                PhoneNumber(
-                    regionCode = state.region.regionCode,
-                    countryCode = state.region.countryCode,
-                    phoneNumber = state.phoneNumber,
-                    phoneNumberError = phoneNumberError,
-                    onCountryCodeClick = { showRegionPicker = true },
-                    onPhoneNumberChange = {
-                        onEvent(AuthEvent.ClearLoginResult)
-                        onEvent(AuthEvent.UpdatePhoneNumber(it))
-                    },
-                    onSubmit = {
-                        keyboardController?.hide()
-                        onEvent(AuthEvent.ClearLoginResult)
-                        onEvent(
-                            AuthEvent.SignIn(
-                                region = state.region,
-                                phoneNumber = state.phoneNumber
-                            )
-                        )
-                    }
-                )
-
-                TextButton(
-                    modifier = Modifier.padding(top = sizes.paddingLarge),
-                    onClick = { onEvent(AuthEvent.RegisterNewPhoneNumber) }
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.phone_number_changed),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center
-                    )
-                }
-
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                )
-
-                 */
-
-                OutlinedTextField(
+                AuthTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    /*
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
-                    ),
-                     */
-                    maxLines = 1,
-                    singleLine = true,
                     value = state.username,
-                    label = {
-                        Text(
-                            text = stringResource(id = R.string.name)
-                        )
-                    },
-                    onValueChange = {
-                        onEvent(AuthEvent.ClearLoginResult)
-                        onEvent(AuthEvent.UpdateUsername(it))
-                    }
+                    label = { Text(text = stringResource(id = R.string.username)) },
+                    onValueChange = { AuthEvent.UpdateUsername(it) }
                 )
 
-                OutlinedTextField(
+                AuthPasswordTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = state.password,
-
-                    /*
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
-                    ),
-                     */
-                    maxLines = 1,
-                    singleLine = true,
-                    label = {
-                        Text(
-                            text = stringResource(id = R.string.password),
-                        )
-                    },
-                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    trailingIcon = {
-                        val image = if (passwordVisible)
-                            painterResource(R.drawable.ic_visibility_black_24)
-                        else painterResource(R.drawable.ic_visibility_off_black_24)
-
-                        // Please provide localized description for accessibility services
-                        val description = if (passwordVisible) "Hide password" else "Show password"
-
-                        IconButton(onClick = {passwordVisible = !passwordVisible}){
-                            Icon(painter  = image, description)
-                        }
-                    },
-                    onValueChange = {
-                        onEvent(AuthEvent.ClearLoginResult)
-                        onEvent(AuthEvent.UpdatePassword(it))
-                    }
+                    label = { Text(text = stringResource(id = R.string.password)) },
+                    onValueChange = { AuthEvent.UpdatePassword(it) }
                 )
 
                 Button(
-                    modifier = Modifier
+                    modifier = modifier
                         .width(LocalSizes.current.region)
                         .height(LocalSizes.current.component),
-                    enabled = (!state.isLoading),
                     onClick = {
-                        onEvent(AuthEvent.ClearLoginResult)
-                        onEvent(
-                            AuthEvent.Login(
-                                username = state.username,
-                                password = state.password
-                            )
+                        AuthEvent.Login(
+                            username = state.username,
+                            password = state.password
                         )
                     }
                 ) {
@@ -276,34 +175,14 @@ fun AuthSignInScreen(
                         )
                     } else {
                         Text(
-                            text = stringResource(id = R.string.log_in),
-                            style = MaterialTheme.typography.labelLarge
+                            text = stringResource(id = R.string.log_in)
                         )
                     }
+
                 }
             }
         }
     }
-
-    /*
-    if (showRegionPicker) {
-        ModalBottomSheet(
-            onDismissRequest = { showRegionPicker = false },
-            sheetState = modalBottomSheetState
-        ) {
-            CountryCodePicker(
-                modifier = Modifier.padding(sizes.paddingXLarge),
-                onItemSelected = {
-                    coroutineScope.launch(Dispatchers.Main) {
-                        modalBottomSheetState.hide()
-                        showRegionPicker = false
-                    }
-                    onEvent(AuthEvent.UpdateRegion(it))
-                }
-            )
-        }
-    }
-     */
 }
 
 @ScreenPreviews

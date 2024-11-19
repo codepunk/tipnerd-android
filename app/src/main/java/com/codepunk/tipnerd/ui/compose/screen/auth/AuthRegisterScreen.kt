@@ -25,49 +25,40 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.codepunk.tipnerd.R
 import com.codepunk.tipnerd.ui.compose.preview.ScreenPreviews
@@ -78,228 +69,215 @@ import kotlin.math.sqrt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthSignUpScreen(
+fun AuthRegisterScreen(
     modifier: Modifier = Modifier,
     state: AuthState,
     onEvent: (AuthEvent) -> Unit = {}
 ) {
-    val sizes = LocalSizes.current
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-    var showRegionPicker by rememberSaveable { mutableStateOf(false) }
-    val modalBottomSheetState: SheetState = rememberModalBottomSheetState()
 
     // Do the following when signup result is "fresh"
     // ...
 
-    Scaffold(
-        modifier = modifier,
-        /*
-        topBar = {
-            TopAppBar(
-                title = { stringResource(R.string.app_name) }
-                // onNavigateUp = { onEvent(AuthEvent.NavigateUp) }
-            )
-        },
-         */
-        snackbarHost = { SnackbarHost(snackBarHostState) }
-    ) { innerPadding ->
-        val layoutMargin = sizes.padding2xLarge
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(
-                    start = layoutMargin,
-                    end = layoutMargin
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                SignUpLandscape(
-                    state = state,
-                    onEvent = onEvent,
-                    onShowRegionPicker = { showRegionPicker = true }
-                )
-            } else {
-                SignUpNonLandscape(
-                    state = state,
-                    onEvent = onEvent,
-                    onShowRegionPicker = { showRegionPicker = true }
-                )
-            }
-        }
+    val windowWidthSizeClass = currentWindowAdaptiveInfoCustom().windowSizeClass.windowWidthSizeClass
+    val outerPadding = when (windowWidthSizeClass) {
+        WindowWidthSizeClass.COMPACT -> LocalSizes.current.paddingLarge
+        WindowWidthSizeClass.MEDIUM -> LocalSizes.current.paddingXLarge
+        WindowWidthSizeClass.EXPANDED -> LocalSizes.current.padding2xLarge
+        else -> LocalSizes.current.paddingLarge
+    }
+    val avatarSize = when (windowWidthSizeClass) {
+        WindowWidthSizeClass.COMPACT -> LocalSizes.current.region2xSmall
+        else -> LocalSizes.current.regionXSmall
     }
 
-    /*
-    if (showRegionPicker) {
-        ModalBottomSheet(
-            onDismissRequest = { showRegionPicker = false },
-            sheetState = modalBottomSheetState
-        ) {
-            CountryCodePicker(
-                modifier = Modifier.padding(sizes.paddingXLarge),
-                onItemSelected = {
-                    coroutineScope.launch(Dispatchers.Main) {
-                        modalBottomSheetState.hide()
-                        showRegionPicker = false
-                    }
-                    onEvent(AuthEvent.UpdateRegion(it))
-                }
-            )
-        }
-    }
-     */
-}
-
-@Composable
-fun SignUpNonLandscape(
-    state: AuthState,
-    onEvent: (AuthEvent) -> Unit,
-    onShowRegionPicker: () -> Unit
-) {
-    val sizes = LocalSizes.current
-
-    // Avatar size is based on width
-    val windowSizeClass = currentWindowAdaptiveInfoCustom().windowSizeClass.windowWidthSizeClass
-    val avatarSize = when (windowSizeClass) {
-        WindowWidthSizeClass.COMPACT -> sizes.component2xLarge
-        else -> sizes.region
-    }
-
-    Column(
-        modifier = Modifier
-            .widthIn(max = sizes.region2xLarge)
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(
-            space = sizes.padding2xLarge,
-            alignment = Alignment.CenterVertically
-        )
-    ) {
-        UserAvatar(
-            modifier = Modifier.width(avatarSize),
-            onClick = { onEvent(AuthEvent.EditAvatar) }
-        )
-
-        SignUpForm(
-            modifier = Modifier.fillMaxWidth(),
-            name = state.name,
-            username = state.username,
-            email = state.email,
-            password = state.password,
-            verifyPassword = state.verifyPassword,
-            onNameChange = { onEvent(AuthEvent.UpdateName(it)) },
-            onUsernameChange = { onEvent(AuthEvent.UpdateUsername(it)) },
-            onEmailChange = { onEvent(AuthEvent.UpdateEmail(it)) },
-            onPasswordChange = { onEvent(AuthEvent.UpdatePassword(it)) },
-            onVerifyPasswordChange = { onEvent(AuthEvent.UpdateVerifyPassword(it)) }
-        )
-
-        SignUpSubmit(
-            modifier = Modifier.fillMaxWidth(),
-            onSubmit = {
-                onEvent(
-                    AuthEvent.Register(
-                        name = state.name,
-                        username = state.username,
-                        email = state.email,
-                        password = state.password,
-                        verifyPassword = state.verifyPassword
-                    )
-                )
-            }
-        )
-    }
-}
-
-@Composable
-fun SignUpLandscape(
-    state: AuthState,
-    onEvent: (AuthEvent) -> Unit,
-    onShowRegionPicker: () -> Unit
-) {
-    val sizes = LocalSizes.current
-
-    // Avatar size is based on height
-    val windowSizeClass = currentWindowAdaptiveInfoCustom().windowSizeClass.windowHeightSizeClass
-    val avatarSize = when (windowSizeClass) {
-        WindowHeightSizeClass.COMPACT -> sizes.component2xLarge
-        else -> sizes.region
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            Column(
-                modifier = Modifier
-                    .widthIn(max = sizes.region3xLarge)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(
-                    space = sizes.padding2xLarge,
-                    alignment = Alignment.CenterVertically
-                )
-            ) {
-                UserAvatar(
-                    modifier = Modifier.width(avatarSize),
-                    onClick = { onEvent(AuthEvent.EditAvatar) }
-                )
-
-                SignUpSubmit(
-                    modifier = Modifier.fillMaxWidth(),
-                    onSubmit = {
-                        onEvent(
-                            AuthEvent.Register(
-                                name = state.name,
-                                username = state.username,
-                                email = state.email,
-                                password = state.password,
-                                verifyPassword = state.verifyPassword
-                            )
-                        )
-                    }
-                )
-            }
-        }
-
-        Spacer(
-            modifier = Modifier
-                .width(sizes.padding2xLarge)
-                .fillMaxHeight()
-        )
-
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            SignUpForm(
-                modifier = Modifier
-                    .widthIn(max = sizes.region3xLarge)
-                    .fillMaxWidth(),
+    val doSubmit: () -> Unit = {
+        onEvent(
+            AuthEvent.Register(
                 name = state.name,
                 username = state.username,
                 email = state.email,
                 password = state.password,
-                verifyPassword = state.verifyPassword,
-                onNameChange = { onEvent(AuthEvent.UpdateName(it)) },
-                onUsernameChange = { onEvent(AuthEvent.UpdateUsername(it)) },
-                onEmailChange = { onEvent(AuthEvent.UpdateEmail(it)) },
-                onPasswordChange = { onEvent(AuthEvent.UpdatePassword(it)) },
-                onVerifyPasswordChange = { onEvent(AuthEvent.UpdateVerifyPassword(it)) }
+                verifyPassword = state.verifyPassword
             )
+        )
+    }
+
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(stringResource(R.string.register))
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { onEvent(AuthEvent.NavigateUp) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = stringResource(id = R.string.content_back)
+                        )
+                    }
+                }
+            )
+        },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
+    ) { paddingValues ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    start = outerPadding,
+                    end = outerPadding
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                // Landscape
+                val innerPadding = when (windowWidthSizeClass) {
+                    WindowWidthSizeClass.COMPACT -> LocalSizes.current.paddingXLarge
+                    WindowWidthSizeClass.MEDIUM -> LocalSizes.current.padding2xLarge
+                    WindowWidthSizeClass.EXPANDED -> LocalSizes.current.padding3xLarge
+                    else -> LocalSizes.current.paddingLarge
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = innerPadding,
+                        alignment = Alignment.CenterHorizontally
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .widthIn(max = LocalSizes.current.region2xLarge)
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(
+                            space = LocalSizes.current.paddingLarge,
+                            alignment = Alignment.CenterVertically
+                        )
+                    ) {
+                        UserAvatar(
+                            modifier = Modifier.width(avatarSize),
+                            onClick = { onEvent(AuthEvent.EditAvatar) }
+                        )
+
+                        AuthTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = state.name,
+                            label = { Text(text = stringResource(id = R.string.name)) },
+                            onValueChange = { AuthEvent.UpdateName(it) }
+                        )
+
+                        AuthTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = state.username,
+                            label = { Text(text = stringResource(id = R.string.username)) },
+                            onValueChange = { AuthEvent.UpdateUsername(it) }
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .widthIn(max = LocalSizes.current.region2xLarge)
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(
+                            space = LocalSizes.current.paddingLarge,
+                            alignment = Alignment.CenterVertically
+                        )
+                    ) {
+                        AuthTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = state.email,
+                            label = { Text(text = stringResource(id = R.string.email)) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                            onValueChange = { AuthEvent.UpdateEmail(it) }
+                        )
+
+                        AuthPasswordTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = state.password,
+                            label = { Text(text = stringResource(id = R.string.password)) },
+                            onValueChange = { AuthEvent.UpdatePassword(it) }
+                        )
+
+                        AuthPasswordTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = state.verifyPassword,
+                            label = { Text(text = stringResource(id = R.string.verify_password)) },
+                            onValueChange = { AuthEvent.UpdateVerifyPassword(it) }
+                        )
+
+                        RegisterSubmit(
+                            isLoading = state.isLoading,
+                            onSubmit = doSubmit
+                        )
+                    }
+                }
+            } else {
+                // Portrait (or more precisely, "non-landscape")
+                Column(
+                    modifier = Modifier
+                        .widthIn(max = LocalSizes.current.region2xLarge)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(
+                        space = LocalSizes.current.paddingLarge,
+                        alignment = Alignment.CenterVertically
+                    )
+                ) {
+                    UserAvatar(
+                        modifier = Modifier.width(avatarSize),
+                        onClick = { onEvent(AuthEvent.EditAvatar) }
+                    )
+
+                    AuthTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = state.name,
+                        label = { Text(text = stringResource(id = R.string.name)) },
+                        onValueChange = { AuthEvent.UpdateName(it) }
+                    )
+
+                    AuthTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = state.username,
+                        label = { Text(text = stringResource(id = R.string.username)) },
+                        onValueChange = { AuthEvent.UpdateUsername(it) }
+                    )
+
+                    AuthTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = state.email,
+                        label = { Text(text = stringResource(id = R.string.email)) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                        onValueChange = { AuthEvent.UpdateEmail(it) }
+                    )
+
+                    AuthPasswordTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = state.password,
+                        label = { Text(text = stringResource(id = R.string.password)) },
+                        onValueChange = { AuthEvent.UpdatePassword(it) }
+                    )
+
+                    AuthPasswordTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = state.verifyPassword,
+                        label = { Text(text = stringResource(id = R.string.verify_password)) },
+                        onValueChange = { AuthEvent.UpdateVerifyPassword(it) }
+                    )
+
+                    RegisterSubmit(
+                        isLoading = state.isLoading,
+                        onSubmit = doSubmit
+                    )
+                }
+            }
         }
     }
 }
@@ -364,202 +342,25 @@ fun UserAvatar(
 }
 
 @Composable
-fun SignUpForm(
+fun RegisterSubmit(
     modifier: Modifier = Modifier,
-    name: String,
-    username: String,
-    email: String,
-    password: String,
-    verifyPassword: String,
-    onNameChange: (String) -> Unit,
-    onUsernameChange: (String) -> Unit,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
-    onVerifyPasswordChange: (String) -> Unit
-) {
-    var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    var verifyPasswordVisible by rememberSaveable { mutableStateOf(false) }
-
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(LocalSizes.current.padding)
-    ) {
-        item {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                /*
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                 */
-                maxLines = 1,
-                singleLine = true,
-                value = name,
-                label = {
-                    Text(
-                        text = stringResource(id = R.string.name)
-                    )
-                },
-                onValueChange = onNameChange
-            )
-        }
-
-        item {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = username,
-                /*
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                 */
-                maxLines = 1,
-                singleLine = true,
-                label = {
-                    Text(
-                        text = stringResource(id = R.string.username),
-                    )
-                },
-                onValueChange = onUsernameChange
-            )
-        }
-
-        item {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = email,
-                /*
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                 */
-                maxLines = 1,
-                singleLine = true,
-                label = {
-                    Text(
-                        text = stringResource(id = R.string.email),
-                    )
-                },
-                onValueChange = onEmailChange
-            )
-        }
-
-        item {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = password,
-
-                /*
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                 */
-                maxLines = 1,
-                singleLine = true,
-                label = {
-                    Text(
-                        text = stringResource(id = R.string.password),
-                    )
-                },
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                trailingIcon = {
-                    val image = if (passwordVisible)
-                        painterResource(R.drawable.ic_visibility_black_24)
-                    else painterResource(R.drawable.ic_visibility_off_black_24)
-
-                    // Please provide localized description for accessibility services
-                    val description = if (passwordVisible) "Hide password" else "Show password"
-
-                    IconButton(onClick = {passwordVisible = !passwordVisible}){
-                        Icon(painter  = image, description)
-                    }
-                },
-                onValueChange = onPasswordChange
-            )
-        }
-
-        item {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = verifyPassword,
-                /*
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                 */
-                maxLines = 1,
-                singleLine = true,
-                label = {
-                    Text(
-                        text = stringResource(id = R.string.verifyPassword),
-                    )
-                },
-                visualTransformation = if (verifyPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                trailingIcon = {
-                    val image = if (verifyPasswordVisible)
-                        painterResource(R.drawable.ic_visibility_black_24)
-                    else painterResource(R.drawable.ic_visibility_off_black_24)
-
-                    // Please provide localized description for accessibility services
-                    val description = if (verifyPasswordVisible) "Hide password" else "Show password"
-
-                    IconButton(onClick = {verifyPasswordVisible = !verifyPasswordVisible}){
-                        Icon(painter  = image, description)
-                    }
-                },
-                onValueChange = onVerifyPasswordChange
-            )
-        }
-
-        /*
-        item {
-            PhoneNumber(
-                modifier = modifier.fillMaxWidth(),
-                regionCode = region.regionCode,
-                countryCode = region.countryCode,
-                phoneNumber = phoneNumber,
-                onCountryCodeClick = { onShowRegionPicker() },
-                onPhoneNumberChange = onPhoneNumberChange
-            )
-        }
-         */
-    }
-}
-
-@Composable
-fun SignUpSubmit(
-    modifier: Modifier = Modifier,
+    isLoading: Boolean,
     onSubmit: () -> Unit
 ) {
-    val sizes = LocalSizes.current
-
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(sizes.paddingXLarge)
+    Button(
+        modifier = modifier
+            .width(LocalSizes.current.region)
+            .height(LocalSizes.current.component),
+        onClick = { onSubmit() }
     ) {
-        Text(
-            text = "Disclaimer",
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center
-        )
-
-        Button(
-            modifier = Modifier
-                .width(sizes.region)
-                .height(sizes.component),
-            onClick = { onSubmit() }
-        ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+                color = MaterialTheme.colorScheme.primary
+            )
+        } else {
             Text(
-                text = stringResource(id = R.string.register),
-                style = MaterialTheme.typography.labelLarge
+                text = stringResource(id = R.string.register)
             )
         }
     }
@@ -570,7 +371,7 @@ fun SignUpSubmit(
 fun AuthRegisterPreviews() {
     TipnerdTheme {
         Scaffold { padding ->
-            AuthSignUpScreen(
+            AuthRegisterScreen(
                 modifier = Modifier.padding(padding),
                 state = AuthState()
             )

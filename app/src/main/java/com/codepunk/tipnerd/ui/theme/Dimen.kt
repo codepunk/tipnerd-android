@@ -32,6 +32,7 @@ class FixedSizeScheme(
     val paddingLarge: Dp,
     val paddingXLarge: Dp,
     val padding2xLarge: Dp,
+    val padding3xLarge: Dp,
     val component2xSmall: Dp,
     val componentXSmall: Dp,
     val componentSmall: Dp,
@@ -57,6 +58,7 @@ val padding: Dp = 8.dp
 val paddingLarge: Dp = 16.dp
 val paddingXLarge: Dp = 24.dp
 val padding2xLarge: Dp = 32.dp
+val padding3xLarge: Dp = 48.dp
 val component2xSmall: Dp = 16.dp
 val componentXSmall: Dp = 24.dp
 val componentSmall: Dp = 40.dp

@@ -50,7 +50,7 @@ fun AuthNavigation(
         }
 
         composable<AuthRoute.AuthRegister> {
-            AuthSignUpScreen(
+            AuthRegisterScreen(
                 state = state
             ) { event ->
                 // Consume navigation events here as appropriate,
