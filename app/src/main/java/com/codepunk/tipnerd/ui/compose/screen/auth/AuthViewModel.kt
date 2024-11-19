@@ -161,8 +161,8 @@ class AuthViewModel @Inject constructor(
             // AuthNavigationEvents are propagated up to AuthNavigation
             // rather than being handled here
             AuthEvent.NavigateToMain -> { /* No op */ }
-            AuthEvent.NavigateToSignIn -> { /* No op */ }
-            AuthEvent.NavigateToSignUp -> { /* No op */ }
+            AuthEvent.NavigateToLogin -> { /* No op */ }
+            AuthEvent.NavigateToRegister -> { /* No op */ }
             AuthEvent.NavigateUp -> { /* No op */ }
 
             // Events/results

@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TipnerdTheme {
-                val authenticated = true // userSession.value is Authenticated
+                val authenticated = false // TODO userSession.value is Authenticated
                 Navigation(
                     startDestination = if (authenticated) {
                         Route.Main

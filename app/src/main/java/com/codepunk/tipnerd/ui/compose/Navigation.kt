@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.codepunk.tipnerd.ui.compose.screen.auth.AuthEvent
 import com.codepunk.tipnerd.ui.compose.screen.auth.AuthScreen
 import com.codepunk.tipnerd.ui.compose.screen.auth.AuthViewModel
 import com.codepunk.tipnerd.ui.compose.screen.main.MainScreen
@@ -49,16 +50,14 @@ fun Navigation(
             ) { event ->
                 // Consume navigation events here as appropriate,
                 // everything else falls through to AuthViewModel
-                /*
                 when (event) {
-                    is AuthEvent.DummyEvent -> navController.navigate(Route.Main) {
+                    is AuthEvent.NavigateToMain -> navController.navigate(Route.Main) {
                         popUpTo(navController.graph.id) {
                             saveState = true
                         }
                     }
                     else -> viewModel.onEvent(event)
                 }
-                 */
             }
         }
 

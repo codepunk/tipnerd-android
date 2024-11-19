@@ -16,6 +16,7 @@
 
 package com.codepunk.tipnerd.di.module
 
+import com.codepunk.tipnerd.data.local.TipnerdDatabase
 import com.codepunk.tipnerd.data.remote.webservice.TipnerdWebservice
 import com.codepunk.tipnerd.data.repository.TipnerdRepositoryImpl
 import com.codepunk.tipnerd.domain.repository.TipnerdRepository
@@ -34,9 +35,11 @@ class DataModule {
     @Singleton
     @Provides
     fun provideTipnerdRepository(
-        webservice: TipnerdWebservice
+        webservice: TipnerdWebservice,
+        database: TipnerdDatabase
     ): TipnerdRepository = TipnerdRepositoryImpl(
-        webservice = webservice
+        webservice = webservice,
+        database = database
     )
 
     // endregion Methods

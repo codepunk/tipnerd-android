@@ -16,32 +16,27 @@
 
 package com.codepunk.tipnerd.ui.compose.screen.auth
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.codepunk.tipnerd.ui.compose.preview.ScreenPreviews
-import com.codepunk.tipnerd.ui.theme.LocalAppColors
 import com.codepunk.tipnerd.ui.theme.TipnerdTheme
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AuthScreen(
     modifier: Modifier = Modifier,
     state: AuthState,
     onEvent: (AuthEvent) -> Unit = {}
 ) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            modifier = Modifier,
-            color = LocalAppColors.current.onBackground,
-            text = "Auth"
+    Scaffold(
+        modifier = modifier,
+    ) { _ ->
+        AuthNavigation(
+            state = state,
+            onEvent = onEvent
         )
     }
 }
