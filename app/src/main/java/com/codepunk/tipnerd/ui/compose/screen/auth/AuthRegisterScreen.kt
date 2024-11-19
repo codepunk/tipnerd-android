@@ -86,10 +86,7 @@ fun AuthRegisterScreen(
         WindowWidthSizeClass.EXPANDED -> LocalSizes.current.padding2xLarge
         else -> LocalSizes.current.paddingLarge
     }
-    val avatarSize = when (windowWidthSizeClass) {
-        WindowWidthSizeClass.COMPACT -> LocalSizes.current.region2xSmall
-        else -> LocalSizes.current.regionXSmall
-    }
+    val avatarSize = LocalSizes.current.region2xSmall
 
     val doSubmit: () -> Unit = {
         onEvent(
@@ -166,6 +163,9 @@ fun AuthRegisterScreen(
                             onClick = { onEvent(AuthEvent.EditAvatar) }
                         )
 
+                        // Increase the padding between avatar & text fields
+                        Spacer(modifier = Modifier)
+
                         AuthTextField(
                             modifier = Modifier.fillMaxWidth(),
                             value = state.name,
@@ -213,6 +213,9 @@ fun AuthRegisterScreen(
                             onValueChange = { AuthEvent.UpdateVerifyPassword(it) }
                         )
 
+                        // Increase the padding between text fields & button
+                        Spacer(modifier = Modifier)
+
                         RegisterSubmit(
                             isLoading = state.isLoading,
                             onSubmit = doSubmit
@@ -235,6 +238,9 @@ fun AuthRegisterScreen(
                         modifier = Modifier.width(avatarSize),
                         onClick = { onEvent(AuthEvent.EditAvatar) }
                     )
+
+                    // Increase the padding between avatar & text fields
+                    Spacer(modifier = Modifier)
 
                     AuthTextField(
                         modifier = Modifier.fillMaxWidth(),
@@ -271,6 +277,9 @@ fun AuthRegisterScreen(
                         label = { Text(text = stringResource(id = R.string.verify_password)) },
                         onValueChange = { AuthEvent.UpdateVerifyPassword(it) }
                     )
+
+                    // Increase the padding between text fields & button
+                    Spacer(modifier = Modifier)
 
                     RegisterSubmit(
                         isLoading = state.isLoading,

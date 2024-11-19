@@ -19,6 +19,7 @@ package com.codepunk.tipnerd.ui.compose.screen.auth
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -156,6 +157,9 @@ fun AuthSignInScreen(
                     label = { Text(text = stringResource(id = R.string.password)) },
                     onValueChange = { AuthEvent.UpdatePassword(it) }
                 )
+
+                // Increase the padding between text fields & button
+                Spacer(modifier = Modifier)
 
                 Button(
                     modifier = modifier
