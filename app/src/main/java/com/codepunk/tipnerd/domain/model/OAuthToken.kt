@@ -16,8 +16,8 @@
 
 package com.codepunk.tipnerd.domain.model
 
-data class OauthToken(
-    val tokenType: OauthTokenType = OauthTokenType.BEARER,
+data class OAuthToken(
+    val tokenType: OAuthTokenType = OAuthTokenType.BEARER,
     val expiresIn: Long = 0,
     val accessToken: String = "",
     val refreshToken: String = ""

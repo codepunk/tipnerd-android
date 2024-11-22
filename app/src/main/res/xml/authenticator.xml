@@ -15,16 +15,12 @@
   ~ limitations under the License.
   -->
 
-<vector
+<account-authenticator
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="2.565"
-    android:viewportHeight="2.565">
-  <path
-      android:pathData="M0,0h2.565v2.565h-2.565z"
-      android:strokeLineJoin="bevel"
-      android:strokeWidth="0.00953491"
-      android:fillColor="#ffcc00"
-      android:strokeLineCap="round"/>
-</vector>
+    android:accountType="@string/authenticator_account_type"
+    android:icon="@drawable/ic_account"
+    android:smallIcon="@drawable/ic_account_small"
+    android:label="@string/app_name"
+    android:customTokens="true"
+    android:accountPreferences="@xml/authenticator_preferences"
+    />

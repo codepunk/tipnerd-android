@@ -16,7 +16,7 @@
 
 package com.codepunk.tipnerd.manager
 
-import com.codepunk.tipnerd.domain.model.OauthToken
+import com.codepunk.tipnerd.domain.model.OAuthToken
 import com.codepunk.tipnerd.manager.UserSession.Authenticated
 import com.codepunk.tipnerd.manager.UserSession.Unauthenticated
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +40,7 @@ class UserSessionManager @Inject constructor() {
 
     // region Methods
 
-    fun onLogin(userId: Long, oauthToken: OauthToken) {
+    fun onLogin(userId: Long, oauthToken: OAuthToken) {
         _userSession.tryEmit(Authenticated(userId, oauthToken))
     }
 

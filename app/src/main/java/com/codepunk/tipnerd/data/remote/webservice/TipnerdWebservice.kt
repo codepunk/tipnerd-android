@@ -34,7 +34,7 @@ interface TipnerdWebservice {
     @FormUrlEncoded
     @POST("/oauth/token")
     suspend fun oauthToken(
-        @Field("grant_type") grantType: RemoteOauthGrantType,
+        @Field("grant_type") grantType: String,
         @Field("client_id") clientId: String,
         @Field("client_secret") clientSecret: String,
         @Field("username") username: String,

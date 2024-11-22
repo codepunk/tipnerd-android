@@ -22,7 +22,7 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
-composeBom = "2024.10.01"
+composeBom = "2024.11.00"
 
 # Added by Codepunk
 # See https://github.com/google/ksp/releases
@@ -31,19 +31,21 @@ accompanist = "0.36.0"
 adaptiveNavigationSuite = "1.3.1"
 arrow = "1.2.4"
 coil = "3.0.0-rc01"
-credentials = "1.5.0-alpha06"
+credentials = "1.5.0-beta01"
 datastore = "1.1.1"
 hilt = "2.51.1"
 hiltNavigationCompose = "1.2.0"
+javapoet = "1.13.0"
 kotlinxCollections = "0.3.8"
 kotlinxDatetime = "0.6.0"
 kotlinxSerialization = "1.7.2"
 kotlinxSerializationConverter = "1.0.0"
-ksp = "2.0.0-1.0.22"
-material3Adaptive = "1.1.0-alpha06"
-navigationCompose = "2.8.3"
+kgp = "2.0.21"
+ksp = "2.0.21-1.0.28"
+material3Adaptive = "1.1.0-alpha07"
+navigationCompose = "2.8.4"
 okhttp = "4.12.0"
-paging = "3.3.2"
+paging = "3.3.4"
 retrofit = "2.11.0"
 room = "2.6.1"
 splashscreen = "1.2.0-alpha02"
@@ -104,6 +106,9 @@ coil-networking = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", ve
 coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif", version.ref = "coil" }
 credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
 credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kgp" }
+javapoet = { group = "com.squareup", name = "javapoet", version.ref = "javapoet" }
 
 [plugins]
 # Supplied by New Project template

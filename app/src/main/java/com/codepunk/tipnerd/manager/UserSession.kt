@@ -16,7 +16,7 @@
 
 package com.codepunk.tipnerd.manager
 
-import com.codepunk.tipnerd.domain.model.OauthToken
+import com.codepunk.tipnerd.domain.model.OAuthToken
 
 sealed interface UserSession {
 
@@ -24,7 +24,7 @@ sealed interface UserSession {
 
     data class Authenticated(
         val userId: Long,
-        val oauthToken: OauthToken
+        val oauthToken: OAuthToken
     ) : UserSession
 
     data object Unauthenticated : UserSession

@@ -20,7 +20,7 @@ package com.codepunk.tipnerd.domain.model
  * An enumerated class that represents how an auth token will be generated and presented for
  * OAuth calls.
  */
-enum class OauthTokenType {
+enum class OAuthTokenType {
 
     // region Values
 

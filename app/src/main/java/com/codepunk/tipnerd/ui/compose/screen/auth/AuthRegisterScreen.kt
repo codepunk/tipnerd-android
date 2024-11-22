@@ -170,14 +170,14 @@ fun AuthRegisterScreen(
                             modifier = Modifier.fillMaxWidth(),
                             value = state.name,
                             label = { Text(text = stringResource(id = R.string.name)) },
-                            onValueChange = { AuthEvent.UpdateName(it) }
+                            onValueChange = { onEvent(AuthEvent.UpdateName(it)) }
                         )
 
                         AuthTextField(
                             modifier = Modifier.fillMaxWidth(),
                             value = state.username,
                             label = { Text(text = stringResource(id = R.string.username)) },
-                            onValueChange = { AuthEvent.UpdateUsername(it) }
+                            onValueChange = { onEvent(AuthEvent.UpdateUsername(it)) }
                         )
                     }
 
@@ -196,21 +196,21 @@ fun AuthRegisterScreen(
                             value = state.email,
                             label = { Text(text = stringResource(id = R.string.email)) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                            onValueChange = { AuthEvent.UpdateEmail(it) }
+                            onValueChange = { onEvent(AuthEvent.UpdateEmail(it)) }
                         )
 
                         AuthPasswordTextField(
                             modifier = Modifier.fillMaxWidth(),
                             value = state.password,
                             label = { Text(text = stringResource(id = R.string.password)) },
-                            onValueChange = { AuthEvent.UpdatePassword(it) }
+                            onValueChange = { onEvent(AuthEvent.UpdatePassword(it)) }
                         )
 
                         AuthPasswordTextField(
                             modifier = Modifier.fillMaxWidth(),
                             value = state.verifyPassword,
                             label = { Text(text = stringResource(id = R.string.verify_password)) },
-                            onValueChange = { AuthEvent.UpdateVerifyPassword(it) }
+                            onValueChange = { onEvent(AuthEvent.UpdateVerifyPassword(it)) }
                         )
 
                         // Increase the padding between text fields & button
@@ -246,14 +246,14 @@ fun AuthRegisterScreen(
                         modifier = Modifier.fillMaxWidth(),
                         value = state.name,
                         label = { Text(text = stringResource(id = R.string.name)) },
-                        onValueChange = { AuthEvent.UpdateName(it) }
+                        onValueChange = { onEvent(AuthEvent.UpdateName(it)) }
                     )
 
                     AuthTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = state.username,
                         label = { Text(text = stringResource(id = R.string.username)) },
-                        onValueChange = { AuthEvent.UpdateUsername(it) }
+                        onValueChange = { onEvent(AuthEvent.UpdateUsername(it)) }
                     )
 
                     AuthTextField(
@@ -261,21 +261,21 @@ fun AuthRegisterScreen(
                         value = state.email,
                         label = { Text(text = stringResource(id = R.string.email)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                        onValueChange = { AuthEvent.UpdateEmail(it) }
+                        onValueChange = { onEvent(AuthEvent.UpdateEmail(it)) }
                     )
 
                     AuthPasswordTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = state.password,
                         label = { Text(text = stringResource(id = R.string.password)) },
-                        onValueChange = { AuthEvent.UpdatePassword(it) }
+                        onValueChange = { onEvent(AuthEvent.UpdatePassword(it)) }
                     )
 
                     AuthPasswordTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = state.verifyPassword,
                         label = { Text(text = stringResource(id = R.string.verify_password)) },
-                        onValueChange = { AuthEvent.UpdateVerifyPassword(it) }
+                        onValueChange = { onEvent(AuthEvent.UpdateVerifyPassword(it)) }
                     )
 
                     // Increase the padding between text fields & button

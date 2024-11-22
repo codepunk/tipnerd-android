@@ -17,9 +17,9 @@
 package com.codepunk.tipnerd.data.mapper
 
 import com.codepunk.tipnerd.data.remote.entity.RemoteOauthToken
-import com.codepunk.tipnerd.domain.model.OauthToken
+import com.codepunk.tipnerd.domain.model.OAuthToken
 
-fun RemoteOauthToken.toDomain(): OauthToken = OauthToken(
+fun RemoteOauthToken.toDomain(): OAuthToken = OAuthToken(
     tokenType = tokenType.toDomain(),
     expiresIn = expiresIn,
     accessToken = accessToken,

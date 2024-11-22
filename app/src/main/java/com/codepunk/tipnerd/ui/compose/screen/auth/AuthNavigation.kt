@@ -63,7 +63,7 @@ fun AuthNavigation(
         }
 
         composable<AuthRoute.AuthLogin> {
-            AuthSignInScreen(
+            AuthLoginScreen(
                 state = state
             ) { event ->
                 // Consume navigation events here as appropriate,

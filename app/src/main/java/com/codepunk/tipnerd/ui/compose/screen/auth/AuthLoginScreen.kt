@@ -60,7 +60,7 @@ import com.codepunk.tipnerd.util.exception.HttpStatusException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthSignInScreen(
+fun AuthLoginScreen(
     modifier: Modifier = Modifier,
     state: AuthState,
     onEvent: (AuthEvent) -> Unit = {}
@@ -75,10 +75,11 @@ fun AuthSignInScreen(
         onEvent(AuthEvent.ConsumeLoginResult)
         state.loginResult?.run {
             onLeft { error ->
-                if (error.cause !is HttpStatusException) {
+                val cause = error.cause ?: error
+                if (cause !is HttpStatusException) {
                     // HttpStatusExceptions will be handled differently
                     showErrorSnackBar(
-                        cause = error.cause,
+                        cause = cause,
                         context = LocalContext.current,
                         snackBarHostState = snackBarHostState,
                         coroutineScope = coroutineScope
@@ -86,11 +87,10 @@ fun AuthSignInScreen(
                     onEvent(AuthEvent.ClearLoginResult)
                 }
             }.onRight {
-                /*
+                val success = true // TODO TEMP
                 if (success) {
-                    onEvent(AuthEvent.NavigateToOtp)
+                    onEvent(AuthEvent.NavigateToMain)
                 }
-                 */
             }
         }
     }
@@ -148,14 +148,14 @@ fun AuthSignInScreen(
                     modifier = Modifier.fillMaxWidth(),
                     value = state.username,
                     label = { Text(text = stringResource(id = R.string.username)) },
-                    onValueChange = { AuthEvent.UpdateUsername(it) }
+                    onValueChange = { onEvent(AuthEvent.UpdateUsername(it)) }
                 )
 
                 AuthPasswordTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = state.password,
                     label = { Text(text = stringResource(id = R.string.password)) },
-                    onValueChange = { AuthEvent.UpdatePassword(it) }
+                    onValueChange = { onEvent(AuthEvent.UpdatePassword(it)) }
                 )
 
                 // Increase the padding between text fields & button
@@ -166,9 +166,11 @@ fun AuthSignInScreen(
                         .width(LocalSizes.current.region)
                         .height(LocalSizes.current.component),
                     onClick = {
-                        AuthEvent.Login(
-                            username = state.username,
-                            password = state.password
+                        onEvent(
+                            AuthEvent.Login(
+                                username = state.username,
+                                password = state.password
+                            )
                         )
                     }
                 ) {
@@ -191,10 +193,10 @@ fun AuthSignInScreen(
 
 @ScreenPreviews
 @Composable
-fun AuthSignInPreviews() {
+fun AuthLoginPreviews() {
     TipnerdTheme {
         Scaffold { padding ->
-            AuthSignInScreen(
+            AuthLoginScreen(
                 modifier = Modifier.padding(padding),
                 state = AuthState()
             )

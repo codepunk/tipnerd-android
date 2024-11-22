@@ -16,7 +16,7 @@
 
 package com.codepunk.tipnerd.domain.model
 
-enum class OauthGrantType(
+enum class OAuthGrantType(
     /**
      * The string value associated with the grant type.
      */

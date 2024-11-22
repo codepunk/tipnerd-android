@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024 Codepunk, LLC
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="0.57"
+    android:viewportHeight="0.57">
+  <path
+      android:pathData="M0.285,0.285m-0.285,0a0.285,0.285 0,1 1,0.57 0a0.285,0.285 0,1 1,-0.57 0"
+      android:strokeLineJoin="bevel"
+      android:strokeWidth="0.01045"
+      android:fillColor="#ffcc00"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M0.38256,0.17703 L0.285,0.46974 0.37015,0.55664A0.285,0.285 45,0 0,0.56009 0.35777Z"
+      android:strokeAlpha="0.15"
+      android:strokeLineJoin="bevel"
+      android:strokeWidth="0.04407"
+      android:strokeColor="#00000000"
+      android:fillAlpha="0.15"
+      android:strokeLineCap="round">
+    <aapt:attr name="android:fillColor">
+      <gradient 
+          android:centerX="0.27505"
+          android:centerY="0.29088"
+          android:gradientRadius="0.7821"
+          android:type="radial">
+        <item android:offset="0" android:color="#FF010000"/>
+        <item android:offset="0.34945" android:color="#00010000"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+  <path
+      android:pathData="m0.285,0.13193c-0.06996,-0 -0.12668,0.05672 -0.12668,0.12668l0,0.00618c-0,0.03017 0.01027,0.05944 0.02911,0.08299L0.285,0.46974 0.38256,0.34778C0.40141,0.32422 0.41168,0.29495 0.41168,0.26479l-0,-0.00618c-0,-0.06996 -0.05672,-0.12668 -0.12668,-0.12668zM0.285,0.20231c0.02815,0 0.0563,0.01877 0.0563,0.0563 0.00001,0.00881 -0.00203,0.0175 -0.00593,0.02539 -0.00313,0.00611 -0.00682,0.01192 -0.01104,0.01734 -0.00344,0.00372 -0.00597,0.0082 -0.00737,0.01307l0,0.01246c-0,0.00533 -0.00432,0.00965 -0.00965,0.00965l-0.04462,-0c-0.00534,0.00001 -0.00967,-0.00432 -0.00967,-0.00965l0,-0.01246C0.25162,0.30953 0.2491,0.30506 0.24566,0.30134 0.24144,0.29592 0.23775,0.29011 0.23463,0.284 0.23073,0.2761 0.22869,0.26742 0.2287,0.25861 0.2287,0.22107 0.25685,0.20231 0.285,0.20231ZM0.26206,0.3444c0.0002,-0.00001 0.00041,-0.00001 0.00062,0l0.04464,0c0.00266,0.00001 0.00481,0.00216 0.00482,0.00482l-0.00002,0c0,0.00266 -0.00215,0.00483 -0.00482,0.00484l-0.04462,0c-0.00659,0.00037 -0.0068,-0.0094 -0.00062,-0.00966zM0.26676,0.36182 L0.30263,0.36182c0.00103,-0 0.00195,0.00065 0.00229,0.00163 0.00033,0.00098 0.00001,0.00205 -0.00081,0.00268 -0.01142,0.00888 -0.02742,0.00888 -0.03884,-0 -0.00183,-0.00141 -0.00081,-0.00433 0.0015,-0.00432z"
+      android:strokeWidth="0.02111"
+      android:fillColor="#ffffff"
+      tools:ignore="VectorPath" />
+</vector>

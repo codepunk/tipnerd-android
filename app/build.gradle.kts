@@ -16,15 +16,15 @@
 
 plugins {
     // Supplied by New Project template
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    id(libs.plugins.android.application.get().pluginId)
+    id(libs.plugins.jetbrains.kotlin.android.get().pluginId)
 
     // Added by Codepunk
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt)
     alias(libs.plugins.serialization)
-    alias(libs.plugins.kotlin.parcelize)
+    id(libs.plugins.kotlin.parcelize.get().pluginId)
 }
 
 android {
@@ -74,34 +74,39 @@ android {
             value = "\"tipnerd_user_settings.json\""
         )
 
-        /*
-         * Pull private values from gradle.properties
-         * (See http://www.rainbowbreeze.it/environmental-variables-api-key-and-secret-buildconfig-and-android-studio/)
-         * (Also see https://medium.com/@ericfu/securely-storing-secrets-in-an-android-application-501f030ae5a3
-         *  for info about using KeyStore)
-         */
-        val tipnerdLocalClientIdProp = if (project.hasProperty("TipnerdLocalClientIdProp")) {
-            "\"${project.property("TipnerdLocalClientIdProp")}\""
-        } else {
-            "/**** Define Tipnerd Local Client Id ****/ \"\""
-        }
-        buildConfigField(
-            type = "String",
-            name = "TIPNERD_LOCAL_CLIENT_ID",
-            value = tipnerdLocalClientIdProp
-        )
+        applicationVariants.all {
+            extractLocalProperty(
+                project = project.rootProject,
+                propertyName = "TipnerdLocalClientIdProp",
+                name = "TIPNERD_LOCAL_CLIENT_ID"
+            )
+            extractLocalProperty(
+                project = project.rootProject,
+                propertyName = "TipnerdLocalClientSecretProp",
+                name = "TIPNERD_LOCAL_CLIENT_SECRET"
+            )
 
-        val tipnerdLocalClientSecretProp = if (project.hasProperty("TipnerdLocalClientSecretProp")) {
-            "\"${project.property("TipnerdLocalClientSecretProp")}\""
-        } else {
-            "/**** Define Tipnerd Local Secret Id ****/ \"\""
-        }
-        buildConfigField(
-            type = "String",
-            name = "TIPNERD_LOCAL_CLIENT_SECRET",
-            value = tipnerdLocalClientSecretProp
-        )
+            makeKey(suffix = "INTENT")
+            makeKey(suffix = "ACCOUNT_AUTHENTICATOR_RESPONSE")
 
+            makeIntentEntity(
+                type = IntentEntityType.ACTION,
+                suffix = "AUTHENTICATION"
+            )
+            makeIntentEntity(
+                type = IntentEntityType.CATEGORY,
+                suffix = "REGISTER"
+            )
+            makeIntentEntity(
+                type = IntentEntityType.EXTRA,
+                suffix = "ACCOUNT_AUTHENTICATOR_RESPONSE"
+            )
+
+            makeConstStringValue(
+                name = "AUTHENTICATOR_ACCOUNT_TYPE",
+                value = applicationId
+            )
+        }
     }
 
     buildTypes {
@@ -140,7 +145,7 @@ android {
             buildConfigField(
                 type = "String",
                 name = "BASE_URL",
-                value = "\"http://localhost/\""
+                value = "\"http://192.168.1.174/\""
             )
         }
     }

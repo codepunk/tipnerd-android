@@ -18,13 +18,13 @@ package com.codepunk.tipnerd.data.mapper
 
 import com.codepunk.tipnerd.data.remote.entity.RemoteOauthGrantType
 import com.codepunk.tipnerd.data.remote.entity.RemoteOauthTokenType
-import com.codepunk.tipnerd.domain.model.OauthGrantType
-import com.codepunk.tipnerd.domain.model.OauthTokenType
+import com.codepunk.tipnerd.domain.model.OAuthGrantType
+import com.codepunk.tipnerd.domain.model.OAuthTokenType
 
 // region Methods
 
-fun OauthGrantType.toRemote(): RemoteOauthGrantType = RemoteOauthGrantType.valueOf(this.name)
+fun OAuthGrantType.toRemote(): RemoteOauthGrantType = RemoteOauthGrantType.valueOf(this.name)
 
-fun RemoteOauthTokenType.toDomain(): OauthTokenType = OauthTokenType.valueOf(this.name)
+fun RemoteOauthTokenType.toDomain(): OAuthTokenType = OAuthTokenType.valueOf(this.name)
 
 // endregion Methods

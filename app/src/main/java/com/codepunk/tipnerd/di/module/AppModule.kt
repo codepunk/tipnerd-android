@@ -16,6 +16,7 @@
 
 package com.codepunk.tipnerd.di.module
 
+import android.accounts.AccountManager
 import android.content.Context
 import android.net.ConnectivityManager
 import androidx.credentials.CredentialManager
@@ -51,6 +52,15 @@ class AppModule {
     @Provides
     fun provideConnectivityManager(@ApplicationContext context: Context): ConnectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    /**
+     * Provides an [AccountManager] instance for providing access to a centralized registry of
+     * the user's online accounts.
+     */
+    @Provides
+    @Singleton
+    fun providesAccountManager(@ApplicationContext context: Context): AccountManager =
+        AccountManager.get(context)
 
     @Singleton
     @ApplicationScope

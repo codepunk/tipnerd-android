@@ -28,8 +28,8 @@ import com.codepunk.tipnerd.data.mapper.toRemote
 import com.codepunk.tipnerd.data.util.networkDataResource
 import com.codepunk.tipnerd.data.remote.webservice.TipnerdWebservice
 import com.codepunk.tipnerd.data.util.cachedDataResource
-import com.codepunk.tipnerd.domain.model.OauthGrantType
-import com.codepunk.tipnerd.domain.model.OauthToken
+import com.codepunk.tipnerd.domain.model.OAuthGrantType
+import com.codepunk.tipnerd.domain.model.OAuthToken
 import com.codepunk.tipnerd.domain.model.User
 import com.codepunk.tipnerd.util.exception.DataException
 import com.codepunk.tipnerd.domain.repository.TipnerdRepository
@@ -45,18 +45,18 @@ class TipnerdRepositoryImpl(
 
     // region Methods
     override fun oauthToken(
-        grantType: OauthGrantType,
+        grantType: OAuthGrantType,
         clientId: String,
         clientSecret: String,
         username: String,
         password: String,
         scope: String
-    ): Flow<Either<Exception, OauthToken>> =
+    ): Flow<Either<Exception, OAuthToken>> =
         networkDataResource(
             fetch = {
                 try {
                     webservice.oauthToken(
-                        grantType = grantType.toRemote(),
+                        grantType = grantType.toRemote().value,
                         clientId = clientId,
                         clientSecret = clientSecret,
                         username = username,
@@ -70,8 +70,8 @@ class TipnerdRepositoryImpl(
     override fun login(
         username: String,
         password: String
-    ): Flow<Either<Exception, OauthToken>> = oauthToken(
-        grantType = OauthGrantType.PASSWORD,
+    ): Flow<Either<Exception, OAuthToken>> = oauthToken(
+        grantType = OAuthGrantType.PASSWORD,
         clientId = BuildConfig.TIPNERD_LOCAL_CLIENT_ID,
         clientSecret = BuildConfig.TIPNERD_LOCAL_CLIENT_SECRET,
         username = username,
@@ -79,9 +79,20 @@ class TipnerdRepositoryImpl(
         scope = DEFAULT_SCOPE
     )
 
+    override fun refreshToken(
+        refreshToken: String
+    ): Flow<Either<Exception, OAuthToken>> = oauthToken(
+        grantType = OAuthGrantType.REFRESH_TOKEN,
+        clientId = BuildConfig.TIPNERD_LOCAL_CLIENT_ID,
+        clientSecret = BuildConfig.TIPNERD_LOCAL_CLIENT_SECRET,
+        username = "",
+        password = "",
+        scope = DEFAULT_SCOPE
+    )
+
     override fun authenticate(
         userId: Long,
-        oauthToken: OauthToken
+        oauthToken: OAuthToken
     ): Flow<Ior<Exception, User?>> = cachedDataResource(
         query = {
             userDao.getUser(userId = userId).map { it?.toDomain() }
