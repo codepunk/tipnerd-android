@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.data.remote.entity
+package com.codepunk.tipnerd.data.mapper
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.codepunk.tipnerd.data.remote.entity.RemoteSuccessResult
+import com.codepunk.tipnerd.domain.model.SuccessResult
 
-@Serializable
-data class RemoteDataError(
-    val error: String = "",
-    @SerialName("error_description")
-    val errorDescription: String = "",
-    val hint: String = "",
-    val message: String = ""
-)
+fun RemoteSuccessResult.toDomain(): SuccessResult = SuccessResult(message = message)

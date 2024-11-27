@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.data.mapper
+package com.codepunk.tipnerd.domain.model
 
-import com.codepunk.tipnerd.data.remote.entity.RemoteDataError
-import com.codepunk.tipnerd.domain.model.DataError
-
-// region Methods
-
-fun RemoteDataError.toDomain(): DataError = DataError(
-    error = error,
-    errorDescription = errorDescription,
-    hint = hint,
-    message = message
+data class SuccessResult(
+    val message: String = ""
 )
-
-// endregion Methods

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.domain.model
+package com.codepunk.tipnerd.data.remote.entity
 
-data class DataError(
-    val error: String = "",
-    val errorDescription: String = "",
-    val hint: String = "",
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class RemoteSuccessResult(
     val message: String = ""
 )

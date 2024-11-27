@@ -16,7 +16,6 @@
 
 package com.codepunk.tipnerd.ui.compose.screen.auth
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codepunk.tipnerd.di.qualifier.IoDispatcher
@@ -90,16 +89,22 @@ class AuthViewModel @Inject constructor(
         password: String,
         verifyPassword: String
     ) {
-        Log.d(
-            "AuthViewModel",
-            "register: " + listOf(
-                "name=$name",
-                "username=$username",
-                "email=$email",
-                "password=$password",
-                "verifyPassword=$verifyPassword"
-            ).joinToString { it }
-        )
+        state = state.copy(isLoading = true)
+        viewModelScope.launch(ioDispatcher) {
+            repository.register(
+                username = username,
+                name = name,
+                email = email,
+                password = password,
+                verifyPassword = verifyPassword
+            ).collect { result ->
+                state = state.copy(
+                    isLoading = false,
+                    isRegisterResultFresh = true,
+                    registerResult = result
+                )
+            }
+        }
     }
 
     private fun login(username: String, password: String) {
@@ -163,6 +168,7 @@ class AuthViewModel @Inject constructor(
             AuthEvent.NavigateToMain -> { /* No op */ }
             AuthEvent.NavigateToLogin -> { /* No op */ }
             AuthEvent.NavigateToRegister -> { /* No op */ }
+            AuthEvent.NavigateToEmailVerification -> { /* No op */ }
             AuthEvent.NavigateUp -> { /* No op */ }
 
             // Events/results

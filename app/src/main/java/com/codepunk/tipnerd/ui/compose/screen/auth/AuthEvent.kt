@@ -31,6 +31,7 @@ sealed interface AuthEvent {
     data object NavigateUp : AuthEvent
     data object NavigateToLogin : AuthEvent
     data object NavigateToRegister : AuthEvent
+    data object NavigateToEmailVerification : AuthEvent
     data object NavigateToMain : AuthEvent
 
     // Events/results

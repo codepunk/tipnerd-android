@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.ui.compose.screen.auth
+package com.codepunk.tipnerd.data.mapper
 
-import kotlinx.serialization.Serializable
+import com.codepunk.tipnerd.data.remote.entity.RemoteApiError
+import com.codepunk.tipnerd.domain.model.ApiError
 
-/**
- * An [AuthRoute] is a "sub-route" of sorts that describes a pathway through [AuthScreen].
- */
-@Serializable
-sealed class AuthRoute {
+// region Methods
 
-    @Serializable
-    data object AuthOptions : AuthRoute()
+fun RemoteApiError.toDomain(): ApiError = ApiError(
+    message = message,
+    errors = errors?.toMap()
+)
 
-    @Serializable
-    data object AuthRegister : AuthRoute()
-
-    @Serializable
-    data object AuthEmailVerification : AuthRoute()
-
-    @Serializable
-    data object AuthLogin : AuthRoute()
-
-}
+// endregion Methods

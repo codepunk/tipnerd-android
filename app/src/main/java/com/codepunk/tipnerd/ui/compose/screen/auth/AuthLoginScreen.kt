@@ -79,7 +79,7 @@ fun AuthLoginScreen(
                 if (cause !is HttpStatusException) {
                     // HttpStatusExceptions will be handled differently
                     showErrorSnackBar(
-                        cause = cause,
+                        throwable = cause,
                         context = LocalContext.current,
                         snackBarHostState = snackBarHostState,
                         coroutineScope = coroutineScope

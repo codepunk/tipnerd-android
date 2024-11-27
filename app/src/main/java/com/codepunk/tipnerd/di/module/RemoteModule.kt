@@ -22,6 +22,7 @@ import com.codepunk.tipnerd.data.remote.interceptor.AuthInterceptor
 import com.codepunk.tipnerd.data.remote.interceptor.NetworkConnectionInterceptor
 import com.codepunk.tipnerd.data.remote.interceptor.UserAgentInterceptor
 import com.codepunk.tipnerd.BuildConfig
+import com.codepunk.tipnerd.data.remote.interceptor.AcceptInterceptor
 import com.codepunk.tipnerd.data.remote.webservice.TipnerdWebservice
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -53,10 +54,12 @@ class RemoteModule {
     fun provideDiscogsOkHttpClient(
         cache: Cache,
         networkConnectionInterceptor: NetworkConnectionInterceptor,
+        acceptInterceptor: AcceptInterceptor,
         userAgentInterceptor: UserAgentInterceptor,
         authInterceptor: AuthInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
         .cache(cache)
+        .addInterceptor(acceptInterceptor)
         .addInterceptor(networkConnectionInterceptor)
         .addInterceptor(userAgentInterceptor)
         .addInterceptor(authInterceptor)

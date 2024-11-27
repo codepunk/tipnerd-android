@@ -18,21 +18,20 @@ package com.codepunk.tipnerd.domain.repository
 
 import arrow.core.Either
 import arrow.core.Ior
-import com.codepunk.tipnerd.domain.model.OAuthGrantType
 import com.codepunk.tipnerd.domain.model.OAuthToken
+import com.codepunk.tipnerd.domain.model.SuccessResult
 import com.codepunk.tipnerd.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface TipnerdRepository {
 
-    fun oauthToken(
-        grantType: OAuthGrantType,
-        clientId: String,
-        clientSecret: String,
+    fun register(
         username: String,
+        name: String,
+        email: String,
         password: String,
-        scope: String
-    ): Flow<Either<Exception, OAuthToken>>
+        verifyPassword: String
+    ): Flow<Either<Exception, SuccessResult>>
 
     fun login(
         username: String,

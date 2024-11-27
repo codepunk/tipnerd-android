@@ -28,14 +28,14 @@ import java.io.IOException
 
 @Composable
 fun showErrorSnackBar(
-    cause: Throwable?,
+    throwable: Throwable?,
     context: Context,
     snackBarHostState: SnackbarHostState,
     coroutineScope: CoroutineScope,
     message: () -> String = {
-        when (cause) {
+        when (throwable) {
             is IOException -> context.getString(R.string.error_no_internet_try_again)
-            else -> cause?.localizedMessage ?: context.getString(R.string.error_unknown)
+            else -> throwable?.localizedMessage ?: context.getString(R.string.error_unknown)
         }
     }
 ): Boolean {

@@ -56,6 +56,23 @@ fun AuthNavigation(
                 // Consume navigation events here as appropriate,
                 // everything else gets passed up the chain
                 when (event) {
+                    is AuthEvent.NavigateToEmailVerification ->
+                        navController.navigate(AuthRoute.AuthEmailVerification) {
+                            popUpTo(AuthRoute.AuthRegister)
+                        }
+                    is AuthEvent.NavigateUp -> navController.navigateUp()
+                    else -> onEvent(event)
+                }
+            }
+        }
+
+        composable<AuthRoute.AuthEmailVerification> {
+            AuthVerificationEmailScreen(
+                state = state
+            ) { event ->
+                // Consume navigation events here as appropriate,
+                // everything else gets passed up the chain
+                when (event) {
                     is AuthEvent.NavigateUp -> navController.navigateUp()
                     else -> onEvent(event)
                 }

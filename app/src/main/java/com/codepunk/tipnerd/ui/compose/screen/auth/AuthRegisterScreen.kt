@@ -52,19 +52,24 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.codepunk.tipnerd.R
+import com.codepunk.tipnerd.ui.compose.common.showErrorSnackBar
 import com.codepunk.tipnerd.ui.compose.preview.ScreenPreviews
 import com.codepunk.tipnerd.ui.theme.LocalSizes
 import com.codepunk.tipnerd.ui.theme.TipnerdTheme
 import com.codepunk.tipnerd.ui.theme.util.currentWindowAdaptiveInfoCustom
+import com.codepunk.tipnerd.util.exception.ApiException
+import com.codepunk.tipnerd.util.exception.HttpStatusException
 import kotlin.math.sqrt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,10 +79,34 @@ fun AuthRegisterScreen(
     state: AuthState,
     onEvent: (AuthEvent) -> Unit = {}
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
     // Do the following when signup result is "fresh"
-    // ...
+    if (state.isRegisterResultFresh) {
+        onEvent(AuthEvent.ConsumeRegisterResult)
+        state.registerResult?.run {
+            onLeft {
+                if (it !is HttpStatusException) {
+                    // HttpStatusExceptions will be handled as supporting text below
+                    showErrorSnackBar(
+                        throwable = it,
+                        context = LocalContext.current,
+                        snackBarHostState = snackBarHostState,
+                        coroutineScope = coroutineScope
+                    )
+                    onEvent(AuthEvent.ClearRegisterResult)
+                }
+            }.onRight {
+                //val success = true // TODO TEMP
+                //if (success) {
+                    onEvent(AuthEvent.NavigateToEmailVerification)
+                //}
+            }
+        }
+    }
+
+    val apiError = (state.registerResult?.leftOrNull()?.cause as? ApiException)?.apiError
 
     val windowWidthSizeClass = currentWindowAdaptiveInfoCustom().windowSizeClass.windowWidthSizeClass
     val outerPadding = when (windowWidthSizeClass) {
@@ -87,18 +116,6 @@ fun AuthRegisterScreen(
         else -> LocalSizes.current.paddingLarge
     }
     val avatarSize = LocalSizes.current.region2xSmall
-
-    val doSubmit: () -> Unit = {
-        onEvent(
-            AuthEvent.Register(
-                name = state.name,
-                username = state.username,
-                email = state.email,
-                password = state.password,
-                verifyPassword = state.verifyPassword
-            )
-        )
-    }
 
     Scaffold(
         modifier = modifier,
@@ -170,6 +187,7 @@ fun AuthRegisterScreen(
                             modifier = Modifier.fillMaxWidth(),
                             value = state.name,
                             label = { Text(text = stringResource(id = R.string.name)) },
+                            supportingText = state.getSupportingText("name"),
                             onValueChange = { onEvent(AuthEvent.UpdateName(it)) }
                         )
 
@@ -177,6 +195,7 @@ fun AuthRegisterScreen(
                             modifier = Modifier.fillMaxWidth(),
                             value = state.username,
                             label = { Text(text = stringResource(id = R.string.username)) },
+                            supportingText = state.getSupportingText("username"),
                             onValueChange = { onEvent(AuthEvent.UpdateUsername(it)) }
                         )
                     }
@@ -195,6 +214,7 @@ fun AuthRegisterScreen(
                             modifier = Modifier.fillMaxWidth(),
                             value = state.email,
                             label = { Text(text = stringResource(id = R.string.email)) },
+                            supportingText = state.getSupportingText("email"),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                             onValueChange = { onEvent(AuthEvent.UpdateEmail(it)) }
                         )
@@ -203,6 +223,7 @@ fun AuthRegisterScreen(
                             modifier = Modifier.fillMaxWidth(),
                             value = state.password,
                             label = { Text(text = stringResource(id = R.string.password)) },
+                            supportingText = state.getSupportingText("password"),
                             onValueChange = { onEvent(AuthEvent.UpdatePassword(it)) }
                         )
 
@@ -210,6 +231,7 @@ fun AuthRegisterScreen(
                             modifier = Modifier.fillMaxWidth(),
                             value = state.verifyPassword,
                             label = { Text(text = stringResource(id = R.string.verify_password)) },
+                            supportingText = state.getSupportingText("password_confirmation"),
                             onValueChange = { onEvent(AuthEvent.UpdateVerifyPassword(it)) }
                         )
 
@@ -218,7 +240,17 @@ fun AuthRegisterScreen(
 
                         RegisterSubmit(
                             isLoading = state.isLoading,
-                            onSubmit = doSubmit
+                            onSubmit = {
+                                onEvent(
+                                    AuthEvent.Register(
+                                        name = state.name,
+                                        username = state.username,
+                                        email = state.email,
+                                        password = state.password,
+                                        verifyPassword = state.verifyPassword
+                                    )
+                                )
+                            }
                         )
                     }
                 }
@@ -246,6 +278,7 @@ fun AuthRegisterScreen(
                         modifier = Modifier.fillMaxWidth(),
                         value = state.name,
                         label = { Text(text = stringResource(id = R.string.name)) },
+                        supportingText = state.getSupportingText("name"),
                         onValueChange = { onEvent(AuthEvent.UpdateName(it)) }
                     )
 
@@ -253,6 +286,7 @@ fun AuthRegisterScreen(
                         modifier = Modifier.fillMaxWidth(),
                         value = state.username,
                         label = { Text(text = stringResource(id = R.string.username)) },
+                        supportingText = state.getSupportingText("username"),
                         onValueChange = { onEvent(AuthEvent.UpdateUsername(it)) }
                     )
 
@@ -260,6 +294,7 @@ fun AuthRegisterScreen(
                         modifier = Modifier.fillMaxWidth(),
                         value = state.email,
                         label = { Text(text = stringResource(id = R.string.email)) },
+                        supportingText = state.getSupportingText("email"),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         onValueChange = { onEvent(AuthEvent.UpdateEmail(it)) }
                     )
@@ -268,6 +303,7 @@ fun AuthRegisterScreen(
                         modifier = Modifier.fillMaxWidth(),
                         value = state.password,
                         label = { Text(text = stringResource(id = R.string.password)) },
+                        supportingText = state.getSupportingText("password"),
                         onValueChange = { onEvent(AuthEvent.UpdatePassword(it)) }
                     )
 
@@ -275,6 +311,7 @@ fun AuthRegisterScreen(
                         modifier = Modifier.fillMaxWidth(),
                         value = state.verifyPassword,
                         label = { Text(text = stringResource(id = R.string.verify_password)) },
+                        supportingText = state.getSupportingText("password_confirmation"),
                         onValueChange = { onEvent(AuthEvent.UpdateVerifyPassword(it)) }
                     )
 
@@ -283,11 +320,36 @@ fun AuthRegisterScreen(
 
                     RegisterSubmit(
                         isLoading = state.isLoading,
-                        onSubmit = doSubmit
+                        onSubmit = {
+                            onEvent(
+                                AuthEvent.Register(
+                                    name = state.name,
+                                    username = state.username,
+                                    email = state.email,
+                                    password = state.password,
+                                    verifyPassword = state.verifyPassword
+                                )
+                            )
+                        }
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun AuthState.getSupportingText(key: String): @Composable (() -> Unit)? {
+    val registerResult = registerResult ?: return null
+    val apiException = registerResult.leftOrNull()?.cause as? ApiException ?: return null
+    val errors = apiException.apiError.errors?.get(key) ?: return null
+    val error = errors.getOrNull(0) ?: return null
+    return {
+        Text(
+            maxLines = 1,
+            text = error,
+            color = MaterialTheme.colorScheme.error
+        )
     }
 }
 

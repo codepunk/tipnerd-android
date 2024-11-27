@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.ui.compose.screen.auth
+package com.codepunk.tipnerd.data.remote.entity
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/**
- * An [AuthRoute] is a "sub-route" of sorts that describes a pathway through [AuthScreen].
- */
 @Serializable
-sealed class AuthRoute {
-
-    @Serializable
-    data object AuthOptions : AuthRoute()
-
-    @Serializable
-    data object AuthRegister : AuthRoute()
-
-    @Serializable
-    data object AuthEmailVerification : AuthRoute()
-
-    @Serializable
-    data object AuthLogin : AuthRoute()
-
-}
+data class RemoteOauthError(
+    val error: String = "",
+    @SerialName("error_description")
+    val errorDescription: String = "",
+    val hint: String = "",
+    val message: String = ""
+)

@@ -173,13 +173,12 @@ class HttpStatus private constructor(
         ).apply { lookupArray.append(code, this) }
 
         /**
-         * The server has received the request headers and the client should proceed to send the
-         * request body.
+         * The requester has asked the server to switch protocols and the server has agreed to do so.
          */
         @JvmStatic
         val SWITCHING_PROTOCOLS: HttpStatus = HttpStatus(
-            code = 100,
-            reasonPhrase = "Continue"
+            code = 101,
+            reasonPhrase = "Switching protocols"
         ).apply { lookupArray.append(code, this) }
 
         /**

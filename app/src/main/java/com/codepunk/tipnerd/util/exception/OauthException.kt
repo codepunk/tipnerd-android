@@ -16,13 +16,13 @@
 
 package com.codepunk.tipnerd.util.exception
 
-import com.codepunk.tipnerd.domain.model.DataError
+import com.codepunk.tipnerd.domain.model.OauthError
 
-class DataException : Exception {
+class OauthException : Exception {
 
     // region Variables
 
-    val dataError: DataError
+    val oauthError: OauthError
 
     // endregion Variables
 
@@ -30,30 +30,30 @@ class DataException : Exception {
 
     constructor(
         message: String,
-        dataError: DataError,
+        oauthError: OauthError,
     ) : super(message) {
-        this.dataError = dataError
+        this.oauthError = oauthError
     }
 
     constructor(
         message: String,
-        dataError: DataError,
+        oauthError: OauthError,
         cause: Throwable
     ) : super(
         message,
         cause
     ) {
-        this.dataError = dataError
+        this.oauthError = oauthError
     }
 
-    constructor(dataError: DataError) : this(
-        message = dataError.message,
-        dataError = dataError
+    constructor(oauthError: OauthError) : this(
+        message = oauthError.message,
+        oauthError = oauthError
     )
 
-    constructor(dataError: DataError, cause: Throwable) : this(
-        message = dataError.message,
-        dataError = dataError,
+    constructor(oauthError: OauthError, cause: Throwable) : this(
+        message = oauthError.message,
+        oauthError = oauthError,
         cause = cause
     )
 

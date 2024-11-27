@@ -14,26 +14,11 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.ui.compose.screen.auth
+package com.codepunk.tipnerd.domain.model
 
-import kotlinx.serialization.Serializable
-
-/**
- * An [AuthRoute] is a "sub-route" of sorts that describes a pathway through [AuthScreen].
- */
-@Serializable
-sealed class AuthRoute {
-
-    @Serializable
-    data object AuthOptions : AuthRoute()
-
-    @Serializable
-    data object AuthRegister : AuthRoute()
-
-    @Serializable
-    data object AuthEmailVerification : AuthRoute()
-
-    @Serializable
-    data object AuthLogin : AuthRoute()
-
-}
+data class OauthError(
+    val error: String = "",
+    val errorDescription: String = "",
+    val hint: String = "",
+    val message: String = ""
+)

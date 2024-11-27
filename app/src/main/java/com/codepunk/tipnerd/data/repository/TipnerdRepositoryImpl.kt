@@ -30,9 +30,12 @@ import com.codepunk.tipnerd.data.remote.webservice.TipnerdWebservice
 import com.codepunk.tipnerd.data.util.cachedDataResource
 import com.codepunk.tipnerd.domain.model.OAuthGrantType
 import com.codepunk.tipnerd.domain.model.OAuthToken
+import com.codepunk.tipnerd.domain.model.SuccessResult
 import com.codepunk.tipnerd.domain.model.User
-import com.codepunk.tipnerd.util.exception.DataException
+import com.codepunk.tipnerd.util.exception.OauthException
 import com.codepunk.tipnerd.domain.repository.TipnerdRepository
+import com.codepunk.tipnerd.util.exception.ApiException
+import com.codepunk.tipnerd.util.exception.HttpStatusException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -44,29 +47,69 @@ class TipnerdRepositoryImpl(
     private val userDao: UserDao by lazy { database.userDao() }
 
     // region Methods
-    override fun oauthToken(
+
+    override fun register(
+        username: String,
+        name: String,
+        email: String,
+        password: String,
+        verifyPassword: String
+    ): Flow<Either<Exception, SuccessResult>> = networkDataResource(
+        fetch = {
+            try {
+                webservice.register(
+                    username,
+                    name,
+                    email,
+                    password,
+                    verifyPassword
+                ).run {
+                    body.mapLeft {
+                        HttpStatusException(
+                            code = code,
+                            message = message,
+                            cause = ApiException(it.toDomain())
+                        )
+                    }
+                }
+            } catch (e: Exception) { e.left() }
+        }
+    ) { it.toDomain() }
+
+    @Suppress("SameParameterValue")
+    private fun oauthToken(
         grantType: OAuthGrantType,
         clientId: String,
         clientSecret: String,
         username: String,
         password: String,
         scope: String
-    ): Flow<Either<Exception, OAuthToken>> =
-        networkDataResource(
-            fetch = {
-                try {
-                    webservice.oauthToken(
-                        grantType = grantType.toRemote().value,
-                        clientId = clientId,
-                        clientSecret = clientSecret,
-                        username = username,
-                        password = password,
-                        scope = scope
-                    ).body.mapLeft { DataException(it.toDomain()) }
-                } catch (e: Exception) { e.left() }
-            }
-        ) { it.toDomain() }
+    ): Flow<Either<Exception, OAuthToken>> = networkDataResource(
+        fetch = {
+            try {
+                webservice.oauthToken(
+                    grantType = grantType.toRemote().value,
+                    clientId = clientId,
+                    clientSecret = clientSecret,
+                    username = username,
+                    password = password,
+                    scope = scope
+                ).run {
+                    body.mapLeft {
+                        HttpStatusException(
+                            code = code,
+                            message = message,
+                            cause = OauthException(it.toDomain())
+                        )
+                    }
+                }
+            } catch (e: Exception) { e.left() }
+        }
+    ) { it.toDomain() }
 
+    /**
+     * TODO Make this use blaze login endpoint first?
+     */
     override fun login(
         username: String,
         password: String
@@ -101,7 +144,7 @@ class TipnerdRepositoryImpl(
             try {
                 webservice.getUser(
                     authorization = "Bearer ${oauthToken.accessToken}"
-                ).body.mapLeft { DataException(it.toDomain()) }
+                ).body.mapLeft { OauthException(it.toDomain()) }
             } catch (e: Exception) {
                 // TODO If there's an error here, we might need to
                 //  try getting a new auth token etc.

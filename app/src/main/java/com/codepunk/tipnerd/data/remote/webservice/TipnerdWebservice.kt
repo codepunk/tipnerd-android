@@ -17,9 +17,10 @@
 package com.codepunk.tipnerd.data.remote.webservice
 
 import arrow.retrofit.adapter.either.ResponseE
-import com.codepunk.tipnerd.data.remote.entity.RemoteOauthGrantType
-import com.codepunk.tipnerd.data.remote.entity.RemoteDataError
+import com.codepunk.tipnerd.data.remote.entity.RemoteApiError
+import com.codepunk.tipnerd.data.remote.entity.RemoteOauthError
 import com.codepunk.tipnerd.data.remote.entity.RemoteOauthToken
+import com.codepunk.tipnerd.data.remote.entity.RemoteSuccessResult
 import com.codepunk.tipnerd.data.remote.entity.RemoteUser
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -32,6 +33,16 @@ interface TipnerdWebservice {
     // region Methods
 
     @FormUrlEncoded
+    @POST("/register")
+    suspend fun register(
+        @Field("username") username: String,
+        @Field("name") name: String,
+        @Field("email") email: String,
+        @Field("password") password: String,
+        @Field("password_confirmation") verifyPassword: String
+    ): ResponseE<RemoteApiError, RemoteSuccessResult>
+
+    @FormUrlEncoded
     @POST("/oauth/token")
     suspend fun oauthToken(
         @Field("grant_type") grantType: String,
@@ -40,13 +51,13 @@ interface TipnerdWebservice {
         @Field("username") username: String,
         @Field("password") password: String,
         @Field("scope") scope: String
-    ): ResponseE<RemoteDataError, RemoteOauthToken>
+    ): ResponseE<RemoteOauthError, RemoteOauthToken>
 
     @FormUrlEncoded
     @GET("/api/user")
     suspend fun getUser(
         @Header("Authorization") authorization: String
-    ): ResponseE<RemoteDataError, RemoteUser>
+    ): ResponseE<RemoteOauthError, RemoteUser>
 
     // endregion Methods
 
