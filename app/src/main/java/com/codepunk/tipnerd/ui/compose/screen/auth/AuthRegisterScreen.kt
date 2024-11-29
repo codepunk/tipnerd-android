@@ -32,6 +32,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -106,8 +109,6 @@ fun AuthRegisterScreen(
         }
     }
 
-    val apiError = (state.registerResult?.leftOrNull()?.cause as? ApiException)?.apiError
-
     val windowWidthSizeClass = currentWindowAdaptiveInfoCustom().windowSizeClass.windowWidthSizeClass
     val outerPadding = when (windowWidthSizeClass) {
         WindowWidthSizeClass.COMPACT -> LocalSizes.current.paddingLarge
@@ -171,7 +172,7 @@ fun AuthRegisterScreen(
                             .fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(
-                            space = LocalSizes.current.paddingLarge,
+                            space = LocalSizes.current.padding2xLarge,
                             alignment = Alignment.CenterVertically
                         )
                     ) {
@@ -179,64 +180,6 @@ fun AuthRegisterScreen(
                             modifier = Modifier.width(avatarSize),
                             onClick = { onEvent(AuthEvent.EditAvatar) }
                         )
-
-                        // Increase the padding between avatar & text fields
-                        Spacer(modifier = Modifier)
-
-                        AuthTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            value = state.name,
-                            label = { Text(text = stringResource(id = R.string.name)) },
-                            supportingText = state.getSupportingText("name"),
-                            onValueChange = { onEvent(AuthEvent.UpdateName(it)) }
-                        )
-
-                        AuthTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            value = state.username,
-                            label = { Text(text = stringResource(id = R.string.username)) },
-                            supportingText = state.getSupportingText("username"),
-                            onValueChange = { onEvent(AuthEvent.UpdateUsername(it)) }
-                        )
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .widthIn(max = LocalSizes.current.region2xLarge)
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(
-                            space = LocalSizes.current.paddingLarge,
-                            alignment = Alignment.CenterVertically
-                        )
-                    ) {
-                        AuthTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            value = state.email,
-                            label = { Text(text = stringResource(id = R.string.email)) },
-                            supportingText = state.getSupportingText("email"),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                            onValueChange = { onEvent(AuthEvent.UpdateEmail(it)) }
-                        )
-
-                        AuthPasswordTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            value = state.password,
-                            label = { Text(text = stringResource(id = R.string.password)) },
-                            supportingText = state.getSupportingText("password"),
-                            onValueChange = { onEvent(AuthEvent.UpdatePassword(it)) }
-                        )
-
-                        AuthPasswordTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            value = state.verifyPassword,
-                            label = { Text(text = stringResource(id = R.string.verify_password)) },
-                            supportingText = state.getSupportingText("password_confirmation"),
-                            onValueChange = { onEvent(AuthEvent.UpdateVerifyPassword(it)) }
-                        )
-
-                        // Increase the padding between text fields & button
-                        Spacer(modifier = Modifier)
 
                         RegisterSubmit(
                             isLoading = state.isLoading,
@@ -253,6 +196,32 @@ fun AuthRegisterScreen(
                             }
                         )
                     }
+
+                    RegisterForm(
+                        modifier = Modifier
+                            .widthIn(max = LocalSizes.current.region2xLarge)
+                            .fillMaxWidth(),
+                        state = state,
+                        onEvent = onEvent
+                    )
+
+                    // Increase the padding between text fields & button
+                    Spacer(modifier = Modifier)
+
+                    RegisterSubmit(
+                        isLoading = state.isLoading,
+                        onSubmit = {
+                            onEvent(
+                                AuthEvent.Register(
+                                    name = state.name,
+                                    username = state.username,
+                                    email = state.email,
+                                    password = state.password,
+                                    verifyPassword = state.verifyPassword
+                                )
+                            )
+                        }
+                    )
                 }
             } else {
                 // Portrait (or more precisely, "non-landscape")
@@ -262,7 +231,7 @@ fun AuthRegisterScreen(
                         .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(
-                        space = LocalSizes.current.paddingLarge,
+                        space = LocalSizes.current.padding2xLarge,
                         alignment = Alignment.CenterVertically
                     )
                 ) {
@@ -271,52 +240,11 @@ fun AuthRegisterScreen(
                         onClick = { onEvent(AuthEvent.EditAvatar) }
                     )
 
-                    // Increase the padding between avatar & text fields
-                    Spacer(modifier = Modifier)
-
-                    AuthTextField(
+                    RegisterForm(
                         modifier = Modifier.fillMaxWidth(),
-                        value = state.name,
-                        label = { Text(text = stringResource(id = R.string.name)) },
-                        supportingText = state.getSupportingText("name"),
-                        onValueChange = { onEvent(AuthEvent.UpdateName(it)) }
+                        state = state,
+                        onEvent = onEvent
                     )
-
-                    AuthTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = state.username,
-                        label = { Text(text = stringResource(id = R.string.username)) },
-                        supportingText = state.getSupportingText("username"),
-                        onValueChange = { onEvent(AuthEvent.UpdateUsername(it)) }
-                    )
-
-                    AuthTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = state.email,
-                        label = { Text(text = stringResource(id = R.string.email)) },
-                        supportingText = state.getSupportingText("email"),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                        onValueChange = { onEvent(AuthEvent.UpdateEmail(it)) }
-                    )
-
-                    AuthPasswordTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = state.password,
-                        label = { Text(text = stringResource(id = R.string.password)) },
-                        supportingText = state.getSupportingText("password"),
-                        onValueChange = { onEvent(AuthEvent.UpdatePassword(it)) }
-                    )
-
-                    AuthPasswordTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = state.verifyPassword,
-                        label = { Text(text = stringResource(id = R.string.verify_password)) },
-                        supportingText = state.getSupportingText("password_confirmation"),
-                        onValueChange = { onEvent(AuthEvent.UpdateVerifyPassword(it)) }
-                    )
-
-                    // Increase the padding between text fields & button
-                    Spacer(modifier = Modifier)
 
                     RegisterSubmit(
                         isLoading = state.isLoading,
@@ -339,17 +267,116 @@ fun AuthRegisterScreen(
 }
 
 @Composable
-private fun AuthState.getSupportingText(key: String): @Composable (() -> Unit)? {
-    val registerResult = registerResult ?: return null
-    val apiException = registerResult.leftOrNull()?.cause as? ApiException ?: return null
-    val errors = apiException.apiError.errors?.get(key) ?: return null
-    val error = errors.getOrNull(0) ?: return null
-    return {
-        Text(
-            maxLines = 1,
-            text = error,
-            color = MaterialTheme.colorScheme.error
-        )
+fun RegisterForm(
+    modifier: Modifier = Modifier,
+    state: AuthState,
+    onEvent: (AuthEvent) -> Unit = {}
+) {
+    val lazyListState: LazyListState = rememberLazyListState()
+
+    // Extract any errors for display
+    val apiError = (state.registerResult?.leftOrNull()?.cause as? ApiException)?.apiError
+    val errorMap = apiError?.errors?.mapValues { (_, errors) ->
+        errors.firstOrNull()
+    } ?: emptyMap()
+
+    LazyColumn(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(
+            space = LocalSizes.current.paddingLarge
+        ),
+        state = lazyListState
+    ) {
+        item {
+            AuthTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = state.name,
+                label = { Text(text = stringResource(id = R.string.name)) },
+                supportingText = errorMap["name"]?.let {
+                    {
+                        Text(
+                            maxLines = 1,
+                            text = it,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                onValueChange = { onEvent(AuthEvent.UpdateName(it)) }
+            )
+        }
+
+        item {
+            AuthTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = state.username,
+                label = { Text(text = stringResource(id = R.string.username)) },
+                supportingText = errorMap["username"]?.let {
+                    {
+                        Text(
+                            maxLines = 1,
+                            text = it,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                onValueChange = { onEvent(AuthEvent.UpdateUsername(it)) }
+            )
+        }
+
+        item {
+            AuthTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = state.email,
+                label = { Text(text = stringResource(id = R.string.email)) },
+                supportingText = errorMap["email"]?.let {
+                    {
+                        Text(
+                            maxLines = 1,
+                            text = it,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                onValueChange = { onEvent(AuthEvent.UpdateEmail(it)) }
+            )
+        }
+
+        item {
+            AuthPasswordTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = state.password,
+                label = { Text(text = stringResource(id = R.string.password)) },
+                supportingText = errorMap["password"]?.let {
+                    {
+                        Text(
+                            maxLines = 1,
+                            text = it,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                onValueChange = { onEvent(AuthEvent.UpdatePassword(it)) }
+            )
+        }
+
+        item {
+            AuthPasswordTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = state.verifyPassword,
+                label = { Text(text = stringResource(id = R.string.verify_password)) },
+                supportingText = errorMap["password_confirmation"]?.let {
+                    {
+                        Text(
+                            maxLines = 1,
+                            text = it,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                onValueChange = { onEvent(AuthEvent.UpdateVerifyPassword(it)) }
+            )
+        }
     }
 }
 
@@ -427,7 +454,7 @@ fun RegisterSubmit(
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(ButtonDefaults.IconSize),
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onPrimary
             )
         } else {
             Text(
