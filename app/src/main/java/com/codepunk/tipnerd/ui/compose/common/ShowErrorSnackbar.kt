@@ -21,10 +21,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.codepunk.tipnerd.R
+import com.codepunk.tipnerd.util.exception.NoConnectivityException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.IOException
+import java.net.SocketTimeoutException
 
 @Composable
 fun showErrorSnackBar(
@@ -34,7 +35,8 @@ fun showErrorSnackBar(
     coroutineScope: CoroutineScope,
     message: () -> String = {
         when (throwable) {
-            is IOException -> context.getString(R.string.error_no_internet_try_again)
+            is NoConnectivityException -> context.getString(R.string.error_no_internet_try_again)
+            is SocketTimeoutException -> context.getString(R.string.error_timeout)
             else -> throwable?.localizedMessage ?: context.getString(R.string.error_unknown)
         }
     }

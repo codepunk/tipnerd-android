@@ -3,6 +3,7 @@
 
     <string name="error">Error</string>
     <string name="error_no_internet_try_again">No internet connection. Please try again later.</string>
+    <string name="error_timeout">The operation timed out. Please try again later.</string>
     <string name="error_unknown">An unknown error occurred.</string>
 
 </resources>
