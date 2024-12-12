@@ -40,10 +40,19 @@ sealed interface AuthEvent {
     data object ClearRegisterResult: AuthEvent
     data object ConsumeLoginResult: AuthEvent
     data object ClearLoginResult: AuthEvent
+    data object ConsumeResendResult: AuthEvent
+    data object ClearResendResult: AuthEvent
 
     // User actions
 
     data object EditAvatar: AuthEvent
+
+    data class Login(
+        val username: String,
+        val password: String
+    ): AuthEvent
+
+    data object Logout: AuthEvent
 
     data class Register(
         val name: String,
@@ -53,9 +62,6 @@ sealed interface AuthEvent {
         val verifyPassword: String
     ): AuthEvent
 
-    data class Login(
-        val username: String,
-        val password: String
-    ): AuthEvent
+    data object ResendVerificationEmail: AuthEvent
 
 }

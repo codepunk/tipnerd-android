@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.data.remote.entity
+package com.codepunk.tipnerd.data.mapper
 
-import kotlinx.serialization.Serializable
+import com.codepunk.tipnerd.data.remote.entity.RemoteAuthStatus
+import com.codepunk.tipnerd.domain.model.AuthStatus
 
-@Serializable
-data class RemoteSuccessResult(
-    val message: String = ""
-)
+fun RemoteAuthStatus.toDomain(): AuthStatus = AuthStatus.valueOf(this.name)

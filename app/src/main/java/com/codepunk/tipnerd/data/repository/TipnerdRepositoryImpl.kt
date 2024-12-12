@@ -16,6 +16,7 @@
 
 package com.codepunk.tipnerd.data.repository
 
+import android.util.Log
 import arrow.core.Either
 import arrow.core.Ior
 import arrow.core.left
@@ -30,7 +31,7 @@ import com.codepunk.tipnerd.data.remote.webservice.TipnerdWebservice
 import com.codepunk.tipnerd.data.util.cachedDataResource
 import com.codepunk.tipnerd.domain.model.OAuthGrantType
 import com.codepunk.tipnerd.domain.model.OAuthToken
-import com.codepunk.tipnerd.domain.model.SuccessResult
+import com.codepunk.tipnerd.domain.model.AuthSuccessResult
 import com.codepunk.tipnerd.domain.model.User
 import com.codepunk.tipnerd.util.exception.OauthException
 import com.codepunk.tipnerd.domain.repository.TipnerdRepository
@@ -48,33 +49,26 @@ class TipnerdRepositoryImpl(
 
     // region Methods
 
-    override fun register(
-        username: String,
-        name: String,
-        email: String,
-        password: String,
-        verifyPassword: String
-    ): Flow<Either<Exception, SuccessResult>> = networkDataResource(
+    override fun authenticate(
+        userId: Long,
+        oauthToken: OAuthToken
+    ): Flow<Ior<Exception, User?>> = cachedDataResource(
+        query = {
+            userDao.getUser(userId = userId).map { it?.toDomain() }
+        },
         fetch = {
             try {
-                webservice.register(
-                    username,
-                    name,
-                    email,
-                    password,
-                    verifyPassword
-                ).run {
-                    body.mapLeft {
-                        HttpStatusException(
-                            code = code,
-                            message = message,
-                            cause = ApiException(it.toDomain())
-                        )
-                    }
-                }
-            } catch (e: Exception) { e.left() }
-        }
-    ) { it.toDomain() }
+                webservice.getUser(
+                    authorization = "Bearer ${oauthToken.accessToken}"
+                ).body.mapLeft { OauthException(it.toDomain()) }
+            } catch (e: Exception) {
+                // TODO If there's an error here, we might need to
+                //  try getting a new auth token etc.
+                e.left()
+            }
+        },
+        saveFetchResult = { userDao.insertUser(it.toLocal()) }
+    )
 
     @Suppress("SameParameterValue")
     private fun oauthToken(
@@ -133,26 +127,48 @@ class TipnerdRepositoryImpl(
         scope = DEFAULT_SCOPE
     )
 
-    override fun authenticate(
-        userId: Long,
-        oauthToken: OAuthToken
-    ): Flow<Ior<Exception, User?>> = cachedDataResource(
-        query = {
-            userDao.getUser(userId = userId).map { it?.toDomain() }
-        },
+    override fun register(
+        username: String,
+        name: String,
+        email: String,
+        password: String,
+        verifyPassword: String
+    ): Flow<Either<Exception, AuthSuccessResult>> = networkDataResource(
         fetch = {
             try {
-                webservice.getUser(
-                    authorization = "Bearer ${oauthToken.accessToken}"
-                ).body.mapLeft { OauthException(it.toDomain()) }
-            } catch (e: Exception) {
-                // TODO If there's an error here, we might need to
-                //  try getting a new auth token etc.
-                e.left()
+                webservice.register(
+                    username,
+                    name,
+                    email,
+                    password,
+                    verifyPassword
+                ).run {
+                    body.mapLeft {
+                        HttpStatusException(
+                            code = code,
+                            message = message,
+                            cause = ApiException(it.toDomain())
+                        )
+                    }
+                }
+            } catch (e: Exception) { e.left() }
+        }
+    ) { it.toDomain() }
+
+    override fun resendVerificationEmail(): Flow<Either<Exception, AuthSuccessResult>> =
+        networkDataResource(
+            fetch = {
+                webservice.resendVerificationEmail().run {
+                    body.mapLeft {
+                        HttpStatusException(
+                            code = code,
+                            message = message,
+                            cause = ApiException(it.toDomain())
+                        )
+                    }
+                }
             }
-        },
-        saveFetchResult = { userDao.insertUser(it.toLocal()) }
-    )
+        ) { it.toDomain() }
 
     // endregion Methods
 

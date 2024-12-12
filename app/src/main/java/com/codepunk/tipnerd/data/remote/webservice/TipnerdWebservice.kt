@@ -20,7 +20,7 @@ import arrow.retrofit.adapter.either.ResponseE
 import com.codepunk.tipnerd.data.remote.entity.RemoteApiError
 import com.codepunk.tipnerd.data.remote.entity.RemoteOauthError
 import com.codepunk.tipnerd.data.remote.entity.RemoteOauthToken
-import com.codepunk.tipnerd.data.remote.entity.RemoteSuccessResult
+import com.codepunk.tipnerd.data.remote.entity.RemoteAuthSuccessResult
 import com.codepunk.tipnerd.data.remote.entity.RemoteUser
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -33,17 +33,16 @@ interface TipnerdWebservice {
     // region Methods
 
     @FormUrlEncoded
-    @POST("/register")
-    suspend fun register(
-        @Field("username") username: String,
-        @Field("name") name: String,
-        @Field("email") email: String,
-        @Field("password") password: String,
-        @Field("password_confirmation") verifyPassword: String
-    ): ResponseE<RemoteApiError, RemoteSuccessResult>
+    @GET("api/user")
+    suspend fun getUser(
+        @Header("Authorization") authorization: String
+    ): ResponseE<RemoteOauthError, RemoteUser>
+
+    @POST("email/verification-notification")
+    suspend fun resendVerificationEmail(): ResponseE<RemoteApiError, RemoteAuthSuccessResult>
 
     @FormUrlEncoded
-    @POST("/oauth/token")
+    @POST("oauth/token")
     suspend fun oauthToken(
         @Field("grant_type") grantType: String,
         @Field("client_id") clientId: String,
@@ -54,10 +53,14 @@ interface TipnerdWebservice {
     ): ResponseE<RemoteOauthError, RemoteOauthToken>
 
     @FormUrlEncoded
-    @GET("/api/user")
-    suspend fun getUser(
-        @Header("Authorization") authorization: String
-    ): ResponseE<RemoteOauthError, RemoteUser>
+    @POST("register")
+    suspend fun register(
+        @Field("username") username: String,
+        @Field("name") name: String,
+        @Field("email") email: String,
+        @Field("password") password: String,
+        @Field("password_confirmation") verifyPassword: String
+    ): ResponseE<RemoteApiError, RemoteAuthSuccessResult>
 
     // endregion Methods
 

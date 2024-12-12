@@ -22,9 +22,16 @@
     <string name="auth_token_type_unknown">Unknown</string>
     <string name="email">Email</string>
     <string name="log_in">Log In</string>
+    <string name="log_out">Log Out</string>
+    <string name="logged_out">You have been logged out.</string>
     <string name="name">Name</string>
     <string name="password">Password</string>
     <string name="register">Register</string>
+    <string name="register_success">You have been registered successfully.</string>
+    <string name="resend_verification_email">Resend verification email</string>
+    <string name="thanks_for_signing_up">Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.</string>
+    <string name="unknown_status">An unknown status was encountered.</string>
     <string name="username">Username</string>
+    <string name="verification_link_sent">A new verification link has been sent to the email address you provided during registration.</string>
     <string name="verify_password">Verify password</string>
 </resources>

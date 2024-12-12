@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package com.codepunk.tipnerd.domain.model
+package com.codepunk.tipnerd.data.mapper
 
-data class SuccessResult(
-    val message: String = ""
+import com.codepunk.tipnerd.data.remote.entity.RemoteAuthSuccessResult
+import com.codepunk.tipnerd.domain.model.AuthSuccessResult
+
+fun RemoteAuthSuccessResult.toDomain(): AuthSuccessResult = AuthSuccessResult(
+    status = status.toDomain(),
+    message = message
 )

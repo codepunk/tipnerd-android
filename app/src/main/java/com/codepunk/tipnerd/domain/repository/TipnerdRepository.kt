@@ -19,19 +19,16 @@ package com.codepunk.tipnerd.domain.repository
 import arrow.core.Either
 import arrow.core.Ior
 import com.codepunk.tipnerd.domain.model.OAuthToken
-import com.codepunk.tipnerd.domain.model.SuccessResult
+import com.codepunk.tipnerd.domain.model.AuthSuccessResult
 import com.codepunk.tipnerd.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface TipnerdRepository {
 
-    fun register(
-        username: String,
-        name: String,
-        email: String,
-        password: String,
-        verifyPassword: String
-    ): Flow<Either<Exception, SuccessResult>>
+    fun authenticate(
+        userId: Long,
+        oauthToken: OAuthToken
+    ): Flow<Ior<Exception, User?>>
 
     fun login(
         username: String,
@@ -42,9 +39,14 @@ interface TipnerdRepository {
         refreshToken: String
     ): Flow<Either<Exception, OAuthToken>>
 
-    fun authenticate(
-        userId: Long,
-        oauthToken: OAuthToken
-    ): Flow<Ior<Exception, User?>>
+    fun register(
+        username: String,
+        name: String,
+        email: String,
+        password: String,
+        verifyPassword: String
+    ): Flow<Either<Exception, AuthSuccessResult>>
+
+    fun resendVerificationEmail(): Flow<Either<Exception, AuthSuccessResult>>
 
 }

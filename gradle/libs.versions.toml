@@ -49,6 +49,7 @@ paging = "3.3.4"
 retrofit = "2.11.0"
 room = "2.6.1"
 splashscreen = "1.2.0-alpha02"
+loggingInterceptor = "4.12.0"
 
 # Libraries in Hollarhype but not (yet) in Tipnerd:
 # desugar
@@ -109,6 +110,7 @@ credentials = { group = "androidx.credentials", name = "credentials", version.re
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kgp" }
 javapoet = { group = "com.squareup", name = "javapoet", version.ref = "javapoet" }
+logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "loggingInterceptor" }
 
 [plugins]
 # Supplied by New Project template

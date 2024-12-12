@@ -85,13 +85,13 @@ fun AuthRegisterScreen(
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
 
-    // Do the following when signup result is "fresh"
+    // Do the following when register result is "fresh"
     if (state.isRegisterResultFresh) {
         onEvent(AuthEvent.ConsumeRegisterResult)
         state.registerResult?.run {
             onLeft {
                 if (it !is HttpStatusException) {
-                    // HttpStatusExceptions will be handled as supporting text below
+                    // HttpStatusExceptions will be handled as "supportingText" below
                     showErrorSnackBar(
                         throwable = it,
                         context = LocalContext.current,
@@ -101,15 +101,13 @@ fun AuthRegisterScreen(
                     onEvent(AuthEvent.ClearRegisterResult)
                 }
             }.onRight {
-                //val success = true // TODO TEMP
-                //if (success) {
-                    onEvent(AuthEvent.NavigateToEmailVerification)
-                //}
+                onEvent(AuthEvent.NavigateToEmailVerification)
             }
         }
     }
 
-    val windowWidthSizeClass = currentWindowAdaptiveInfoCustom().windowSizeClass.windowWidthSizeClass
+    val windowWidthSizeClass =
+        currentWindowAdaptiveInfoCustom().windowSizeClass.windowWidthSizeClass
     val outerPadding = when (windowWidthSizeClass) {
         WindowWidthSizeClass.COMPACT -> LocalSizes.current.paddingLarge
         WindowWidthSizeClass.MEDIUM -> LocalSizes.current.paddingXLarge

@@ -34,6 +34,8 @@ import kotlinx.serialization.json.Json
 import okhttp3.Cache
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.logging.HttpLoggingInterceptor.Level
 import retrofit2.Converter
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -51,18 +53,26 @@ class RemoteModule {
 
     @Singleton
     @Provides
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
+        setLevel(Level.HEADERS)
+    }
+
+    @Singleton
+    @Provides
     fun provideDiscogsOkHttpClient(
         cache: Cache,
         networkConnectionInterceptor: NetworkConnectionInterceptor,
         acceptInterceptor: AcceptInterceptor,
         userAgentInterceptor: UserAgentInterceptor,
-        authInterceptor: AuthInterceptor
+        authInterceptor: AuthInterceptor,
+        httpLoggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
         .cache(cache)
         .addInterceptor(acceptInterceptor)
         .addInterceptor(networkConnectionInterceptor)
         .addInterceptor(userAgentInterceptor)
         .addInterceptor(authInterceptor)
+        .addInterceptor(httpLoggingInterceptor)
         .build()
 
     @Singleton

@@ -145,7 +145,7 @@ android {
             buildConfigField(
                 type = "String",
                 name = "BASE_URL",
-                value = "\"http://192.168.1.174/\""
+                value = "\"http://10.0.2.2:80/\""
             )
         }
     }
@@ -248,5 +248,8 @@ dependencies {
     // Credentials
     implementation(libs.credentials.play.services.auth)
     implementation(libs.credentials)
+
+    // Logging interceptor
+    implementation(libs.logging.interceptor)
 
 }

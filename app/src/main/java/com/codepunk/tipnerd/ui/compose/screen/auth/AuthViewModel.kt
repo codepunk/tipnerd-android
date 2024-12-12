@@ -123,6 +123,19 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    private fun resendVerificationEmail() {
+        state = state.copy(isLoading = true)
+        viewModelScope.launch(ioDispatcher) {
+            repository.resendVerificationEmail().collect { result ->
+                state = state.copy(
+                    isLoading = false,
+                    isResendResultFresh = true,
+                    resendResult = result
+                )
+            }
+        }
+    }
+
     // Events/results
 
     private fun consumeLoginResult() {
@@ -151,6 +164,19 @@ class AuthViewModel @Inject constructor(
         )
     }
 
+    private fun consumeResendResult() {
+        state = state.copy(
+            isResendResultFresh = false
+        )
+    }
+
+    private fun clearResendResult() {
+        state = state.copy(
+            isResendResultFresh = true,
+            resendResult = null
+        )
+    }
+
     // Event delegate
 
     fun onEvent(event: AuthEvent) {
@@ -176,6 +202,8 @@ class AuthViewModel @Inject constructor(
             AuthEvent.ClearLoginResult -> clearLoginResult()
             AuthEvent.ConsumeRegisterResult -> consumeRegisterResult()
             AuthEvent.ClearRegisterResult -> clearRegisterResult()
+            AuthEvent.ConsumeResendResult -> consumeResendResult()
+            AuthEvent.ClearResendResult -> clearResendResult()
 
             // User actions
             AuthEvent.EditAvatar -> TODO("Not yet implemented")
@@ -183,6 +211,7 @@ class AuthViewModel @Inject constructor(
                 username = event.username,
                 password = event.password
             )
+            AuthEvent.Logout -> { /* TODO */ }
             is AuthEvent.Register -> register(
                 name = event.name,
                 username = event.username,
@@ -190,6 +219,9 @@ class AuthViewModel @Inject constructor(
                 password = event.password,
                 verifyPassword = event.verifyPassword
             )
+            AuthEvent.ResendVerificationEmail -> {
+                resendVerificationEmail()
+            }
         }
     }
 
