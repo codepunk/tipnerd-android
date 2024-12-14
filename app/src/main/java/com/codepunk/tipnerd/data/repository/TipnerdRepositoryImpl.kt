@@ -16,7 +16,6 @@
 
 package com.codepunk.tipnerd.data.repository
 
-import android.util.Log
 import arrow.core.Either
 import arrow.core.Ior
 import arrow.core.left
@@ -26,17 +25,17 @@ import com.codepunk.tipnerd.data.local.dao.UserDao
 import com.codepunk.tipnerd.data.mapper.toDomain
 import com.codepunk.tipnerd.data.mapper.toLocal
 import com.codepunk.tipnerd.data.mapper.toRemote
-import com.codepunk.tipnerd.data.util.networkDataResource
 import com.codepunk.tipnerd.data.remote.webservice.TipnerdWebservice
 import com.codepunk.tipnerd.data.util.cachedDataResource
+import com.codepunk.tipnerd.data.util.networkDataResource
+import com.codepunk.tipnerd.domain.model.AuthSuccessResult
 import com.codepunk.tipnerd.domain.model.OAuthGrantType
 import com.codepunk.tipnerd.domain.model.OAuthToken
-import com.codepunk.tipnerd.domain.model.AuthSuccessResult
 import com.codepunk.tipnerd.domain.model.User
-import com.codepunk.tipnerd.util.exception.OauthException
 import com.codepunk.tipnerd.domain.repository.TipnerdRepository
 import com.codepunk.tipnerd.util.exception.ApiException
 import com.codepunk.tipnerd.util.exception.HttpStatusException
+import com.codepunk.tipnerd.util.exception.OauthException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

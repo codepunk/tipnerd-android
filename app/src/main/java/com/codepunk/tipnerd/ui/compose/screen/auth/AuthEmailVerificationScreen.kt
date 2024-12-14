@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -121,14 +122,6 @@ fun AuthVerificationEmailScreen(
                         fontWeight = FontWeight.Bold,
                         text = result.status.toString(LocalContext.current)
                     )
-                    val x = "I'm here"
-                    val y = "$x"
-                }?.onLeft {
-                    val x = "I'm here"
-                    val y = "$x"
-                } ?: run {
-                    val x = "I'm here"
-                    val y = "$x"
                 }
 
                 Row(
@@ -136,7 +129,9 @@ fun AuthVerificationEmailScreen(
                         .fillMaxWidth()
                 ) {
                     Button(
-                        modifier = modifier.height(LocalSizes.current.component),
+                        modifier = modifier
+                            .width(LocalSizes.current.regionLarge)
+                            .height(LocalSizes.current.component),
                         onClick = {
                             onEvent(AuthEvent.ResendVerificationEmail)
                         }

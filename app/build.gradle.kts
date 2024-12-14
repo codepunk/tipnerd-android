@@ -249,7 +249,6 @@ dependencies {
     implementation(libs.credentials.play.services.auth)
     implementation(libs.credentials)
 
-    // Logging interceptor
+    // OkHttp Logging interceptor
     implementation(libs.logging.interceptor)
-
 }

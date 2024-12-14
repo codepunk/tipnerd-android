@@ -18,11 +18,12 @@ package com.codepunk.tipnerd.di.module
 
 import android.content.Context
 import arrow.retrofit.adapter.either.EitherCallAdapterFactory
-import com.codepunk.tipnerd.data.remote.interceptor.AuthInterceptor
-import com.codepunk.tipnerd.data.remote.interceptor.NetworkConnectionInterceptor
-import com.codepunk.tipnerd.data.remote.interceptor.UserAgentInterceptor
 import com.codepunk.tipnerd.BuildConfig
 import com.codepunk.tipnerd.data.remote.interceptor.AcceptInterceptor
+import com.codepunk.tipnerd.data.remote.interceptor.AuthInterceptor
+import com.codepunk.tipnerd.data.remote.interceptor.CookieInterceptor
+import com.codepunk.tipnerd.data.remote.interceptor.NetworkConnectionInterceptor
+import com.codepunk.tipnerd.data.remote.interceptor.UserAgentInterceptor
 import com.codepunk.tipnerd.data.remote.webservice.TipnerdWebservice
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -38,6 +39,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
 import retrofit2.Converter
 import retrofit2.Retrofit
+import java.net.CookieManager
 import javax.inject.Singleton
 
 @Module
@@ -59,12 +61,17 @@ class RemoteModule {
 
     @Singleton
     @Provides
+    fun provideCookieManager(): CookieManager = CookieManager()
+
+    @Singleton
+    @Provides
     fun provideDiscogsOkHttpClient(
         cache: Cache,
         networkConnectionInterceptor: NetworkConnectionInterceptor,
         acceptInterceptor: AcceptInterceptor,
         userAgentInterceptor: UserAgentInterceptor,
         authInterceptor: AuthInterceptor,
+        cookieInterceptor: CookieInterceptor,
         httpLoggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
         .cache(cache)
@@ -72,7 +79,8 @@ class RemoteModule {
         .addInterceptor(networkConnectionInterceptor)
         .addInterceptor(userAgentInterceptor)
         .addInterceptor(authInterceptor)
-        .addInterceptor(httpLoggingInterceptor)
+        .addInterceptor(cookieInterceptor)
+        .addNetworkInterceptor(httpLoggingInterceptor)
         .build()
 
     @Singleton
