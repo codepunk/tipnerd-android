@@ -73,6 +73,11 @@ fun AuthNavigation(
                 // Consume navigation events here as appropriate,
                 // everything else gets passed up the chain
                 when (event) {
+                    is AuthEvent.NavigateToOptions ->
+                        navController.popBackStack(
+                            route = AuthRoute.AuthOptions,
+                            inclusive = false
+                        )
                     is AuthEvent.NavigateUp -> navController.navigateUp()
                     else -> onEvent(event)
                 }

@@ -32,6 +32,9 @@ interface TipnerdWebservice {
 
     // region Methods
 
+    @GET("/")
+    suspend fun home(): ResponseE<RemoteApiError, Any>
+
     @FormUrlEncoded
     @GET("api/user")
     suspend fun getUser(
@@ -40,6 +43,9 @@ interface TipnerdWebservice {
 
     @POST("email/verification-notification")
     suspend fun resendVerificationEmail(): ResponseE<RemoteApiError, RemoteAuthSuccessResult>
+
+    @POST("logout")
+    suspend fun logout(): ResponseE<RemoteApiError, RemoteAuthSuccessResult>
 
     @FormUrlEncoded
     @POST("oauth/token")

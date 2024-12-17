@@ -23,6 +23,7 @@
     <string name="email">Email</string>
     <string name="log_in">Log In</string>
     <string name="log_out">Log Out</string>
+    <string name="logging_out">Logging out...</string>
     <string name="logged_out">You have been logged out.</string>
     <string name="name">Name</string>
     <string name="password">Password</string>

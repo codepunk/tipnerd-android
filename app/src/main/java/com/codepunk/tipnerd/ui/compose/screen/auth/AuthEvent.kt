@@ -30,6 +30,7 @@ sealed interface AuthEvent {
 
     data object NavigateUp : AuthEvent
     data object NavigateToLogin : AuthEvent
+    data object NavigateToOptions : AuthEvent
     data object NavigateToRegister : AuthEvent
     data object NavigateToEmailVerification : AuthEvent
     data object NavigateToMain : AuthEvent
@@ -39,6 +40,8 @@ sealed interface AuthEvent {
     data object ConsumeRegisterResult: AuthEvent
     data object ClearRegisterResult: AuthEvent
     data object ConsumeLoginResult: AuthEvent
+    data object ConsumeLogoutResult: AuthEvent
+    data object ClearLogoutResult: AuthEvent
     data object ClearLoginResult: AuthEvent
     data object ConsumeResendResult: AuthEvent
     data object ClearResendResult: AuthEvent

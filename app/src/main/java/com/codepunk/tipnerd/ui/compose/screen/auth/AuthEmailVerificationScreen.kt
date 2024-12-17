@@ -55,6 +55,7 @@ import com.codepunk.tipnerd.ui.theme.LocalAppColors
 import com.codepunk.tipnerd.ui.theme.LocalSizes
 import com.codepunk.tipnerd.ui.theme.TipnerdTheme
 import com.codepunk.tipnerd.util.exception.HttpStatusException
+import com.codepunk.tipnerd.ui.compose.screen.auth.AuthState.LoadingState
 
 @Composable
 fun AuthVerificationEmailScreen(
@@ -68,21 +69,34 @@ fun AuthVerificationEmailScreen(
     // Do the following when resend result is "fresh"
     if (state.isResendResultFresh) {
         onEvent(AuthEvent.ConsumeResendResult)
-        state.registerResult?.run {
-            onLeft {
-                if (it !is HttpStatusException) {
-                    // HttpStatusExceptions will be handled as "supportingText" below
-                    showErrorSnackBar(
-                        throwable = it,
-                        context = LocalContext.current,
-                        snackBarHostState = snackBarHostState,
-                        coroutineScope = coroutineScope
-                    )
-                    onEvent(AuthEvent.ClearResendResult)
-                }
-            }.onRight {
-                // Do we need to do anything here?
+        state.registerResult?.onLeft {
+            if (it !is HttpStatusException) {
+                // HttpStatusExceptions will be handled as "supportingText" below
+                showErrorSnackBar(
+                    throwable = it,
+                    context = LocalContext.current,
+                    snackBarHostState = snackBarHostState,
+                    coroutineScope = coroutineScope
+                )
+                onEvent(AuthEvent.ClearResendResult)
             }
+        }?.onRight {
+            // Do we need to do anything here?
+        }
+    }
+
+    if (state.isLogoutResultFresh) {
+        onEvent(AuthEvent.ConsumeLogoutResult)
+        state.logoutResult?.onLeft {
+            showErrorSnackBar(
+                throwable = it,
+                context = LocalContext.current,
+                snackBarHostState = snackBarHostState,
+                coroutineScope = coroutineScope
+            )
+            onEvent(AuthEvent.ClearLogoutResult)
+        }?.onRight {
+            onEvent(AuthEvent.NavigateToOptions)
         }
     }
 
@@ -132,11 +146,13 @@ fun AuthVerificationEmailScreen(
                         modifier = modifier
                             .width(LocalSizes.current.regionLarge)
                             .height(LocalSizes.current.component),
+                        enabled = !state.isLoading,
                         onClick = {
+                            onEvent(AuthEvent.ClearResendResult)
                             onEvent(AuthEvent.ResendVerificationEmail)
                         }
                     ) {
-                        if (state.isLoading) {
+                        if (state.loadingState == LoadingState.RESEND) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(ButtonDefaults.IconSize),
                                 color = MaterialTheme.colorScheme.onPrimary
@@ -153,12 +169,15 @@ fun AuthVerificationEmailScreen(
                     )
 
                     TextButton(
-                        onClick = {
-                            onEvent(AuthEvent.Logout)
-                        }
+                        enabled = !state.isLoading,
+                        onClick = { onEvent(AuthEvent.Logout) }
                     ) {
                         Text(
-                            text = stringResource(id = R.string.log_out)
+                            text = if (state.loadingState == LoadingState.LOGOUT) {
+                                stringResource(id = R.string.logging_out)
+                            } else {
+                                stringResource(id = R.string.log_out)
+                            }
                         )
                     }
                 }

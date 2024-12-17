@@ -447,6 +447,7 @@ fun RegisterSubmit(
         modifier = modifier
             .width(LocalSizes.current.region)
             .height(LocalSizes.current.component),
+        enabled = !isLoading,
         onClick = { onSubmit() }
     ) {
         if (isLoading) {

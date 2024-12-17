@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codepunk.tipnerd.di.qualifier.IoDispatcher
 import com.codepunk.tipnerd.domain.repository.TipnerdRepository
+import com.codepunk.tipnerd.ui.compose.screen.auth.AuthState.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -89,7 +90,7 @@ class AuthViewModel @Inject constructor(
         password: String,
         verifyPassword: String
     ) {
-        state = state.copy(isLoading = true)
+        state = state.copy(loadingState = LoadingState.REGISTER)
         viewModelScope.launch(ioDispatcher) {
             repository.register(
                 username = username,
@@ -99,7 +100,7 @@ class AuthViewModel @Inject constructor(
                 verifyPassword = verifyPassword
             ).collect { result ->
                 state = state.copy(
-                    isLoading = false,
+                    loadingState = LoadingState.NONE,
                     isRegisterResultFresh = true,
                     registerResult = result
                 )
@@ -108,14 +109,14 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun login(username: String, password: String) {
-        state = state.copy(isLoading = true)
+        state = state.copy(loadingState = LoadingState.LOGIN)
         viewModelScope.launch(ioDispatcher) {
             repository.login(
                 username = username,
                 password = password
             ).collect { result ->
                 state = state.copy(
-                    isLoading = false,
+                    loadingState = LoadingState.NONE,
                     isLoginResultFresh = true,
                     loginResult = result
                 )
@@ -123,12 +124,25 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    private fun logout() {
+        state = state.copy(loadingState = LoadingState.LOGOUT)
+        viewModelScope.launch(ioDispatcher) {
+            repository.logout().collect { result ->
+                state = state.copy(
+                    loadingState = LoadingState.NONE,
+                    isLogoutResultFresh = true,
+                    logoutResult = result
+                )
+            }
+        }
+    }
+
     private fun resendVerificationEmail() {
-        state = state.copy(isLoading = true)
+        state = state.copy(loadingState = LoadingState.RESEND)
         viewModelScope.launch(ioDispatcher) {
             repository.resendVerificationEmail().collect { result ->
                 state = state.copy(
-                    isLoading = false,
+                    loadingState = LoadingState.NONE,
                     isResendResultFresh = true,
                     resendResult = result
                 )
@@ -148,6 +162,19 @@ class AuthViewModel @Inject constructor(
         state = state.copy(
             isLoginResultFresh = true,
             loginResult = null
+        )
+    }
+
+    private fun consumeLogoutResult() {
+        state = state.copy(
+            isLogoutResultFresh = false
+        )
+    }
+
+    private fun clearLogoutResult() {
+        state = state.copy(
+            isLogoutResultFresh = true,
+            logoutResult = null
         )
     }
 
@@ -193,6 +220,7 @@ class AuthViewModel @Inject constructor(
             // rather than being handled here
             AuthEvent.NavigateToMain -> { /* No op */ }
             AuthEvent.NavigateToLogin -> { /* No op */ }
+            AuthEvent.NavigateToOptions -> { /* No op */ }
             AuthEvent.NavigateToRegister -> { /* No op */ }
             AuthEvent.NavigateToEmailVerification -> { /* No op */ }
             AuthEvent.NavigateUp -> { /* No op */ }
@@ -200,6 +228,8 @@ class AuthViewModel @Inject constructor(
             // Events/results
             AuthEvent.ConsumeLoginResult -> consumeLoginResult()
             AuthEvent.ClearLoginResult -> clearLoginResult()
+            AuthEvent.ConsumeLogoutResult -> consumeLogoutResult()
+            AuthEvent.ClearLogoutResult -> clearLogoutResult()
             AuthEvent.ConsumeRegisterResult -> consumeRegisterResult()
             AuthEvent.ClearRegisterResult -> clearRegisterResult()
             AuthEvent.ConsumeResendResult -> consumeResendResult()
@@ -211,7 +241,7 @@ class AuthViewModel @Inject constructor(
                 username = event.username,
                 password = event.password
             )
-            AuthEvent.Logout -> { /* TODO */ }
+            AuthEvent.Logout -> logout()
             is AuthEvent.Register -> register(
                 name = event.name,
                 username = event.username,

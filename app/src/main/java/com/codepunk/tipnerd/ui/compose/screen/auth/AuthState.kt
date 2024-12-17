@@ -24,7 +24,7 @@ data class AuthState(
 
     // Flags
 
-    val isLoading: Boolean = false,
+    val loadingState: LoadingState = LoadingState.NONE,
 
     // Data
 
@@ -39,10 +39,34 @@ data class AuthState(
     val isLoginResultFresh: Boolean = false,
     val loginResult: Either<Exception, OAuthToken>? = null,
 
+    val isLogoutResultFresh: Boolean = false,
+    val logoutResult: Either<Exception, AuthSuccessResult>? = null,
+
     val isRegisterResultFresh: Boolean = false,
     val registerResult: Either<Exception, AuthSuccessResult>? = null,
 
     val isResendResultFresh: Boolean = false,
     val resendResult: Either<Exception, AuthSuccessResult>? = null
 
-)
+) {
+
+    // region Variables
+
+    val isLoading: Boolean
+        get() = loadingState != LoadingState.NONE
+
+    // endregion Variables
+
+    // region Nested & inner classes
+
+    enum class LoadingState {
+        NONE,
+        LOGIN,
+        LOGOUT,
+        REGISTER,
+        RESEND
+    }
+
+    // endregion Nested & inner classes
+
+}

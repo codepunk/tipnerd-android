@@ -30,10 +30,14 @@ interface TipnerdRepository {
         oauthToken: OAuthToken
     ): Flow<Ior<Exception, User?>>
 
+    fun home(): Flow<Either<Exception, Any>>
+
     fun login(
         username: String,
         password: String
     ): Flow<Either<Exception, OAuthToken>>
+
+    fun logout(): Flow<Either<Exception, AuthSuccessResult>>
 
     fun refreshToken(
         refreshToken: String

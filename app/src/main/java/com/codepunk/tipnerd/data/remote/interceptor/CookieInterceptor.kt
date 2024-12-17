@@ -45,7 +45,7 @@ class CookieInterceptor @Inject constructor(
 
         return chain.proceed(newRequest).apply {
             // Store new cookies from response
-            headers.filter { it.first == "Set-Cookie" }.forEach { (_, header) ->
+            headers.toMultimap()["Set-Cookie"]?.forEach { header ->
                 HttpCookie.parse(header).forEach {
                     cookieManager.cookieStore.add(request.url.toUri(), it)
                 }

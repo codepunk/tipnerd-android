@@ -16,6 +16,7 @@
 
 package com.codepunk.tipnerd.data.repository
 
+import androidx.datastore.preferences.protobuf.Api
 import arrow.core.Either
 import arrow.core.Ior
 import arrow.core.left
@@ -69,6 +70,23 @@ class TipnerdRepositoryImpl(
         saveFetchResult = { userDao.insertUser(it.toLocal()) }
     )
 
+    // TODO The exception wouldn't actually be ApiException
+    override fun home(): Flow<Either<Exception, Any>> = networkDataResource(
+        fetch = {
+            try {
+                webservice.home().run {
+                    body.mapLeft {
+                        HttpStatusException(
+                            code = code,
+                            message = message,
+                            cause = ApiException(it.toDomain())
+                        )
+                    }
+                }
+            } catch (e: Exception) { e.left() }
+        }
+    ) { it }
+
     @Suppress("SameParameterValue")
     private fun oauthToken(
         grantType: OAuthGrantType,
@@ -115,6 +133,22 @@ class TipnerdRepositoryImpl(
         scope = DEFAULT_SCOPE
     )
 
+    override fun logout(): Flow<Either<Exception, AuthSuccessResult>> = networkDataResource(
+        fetch = {
+            try {
+                webservice.logout().run {
+                    body.mapLeft {
+                        HttpStatusException(
+                            code = code,
+                            message = message,
+                            cause = ApiException(it.toDomain())
+                        )
+                    }
+                }
+            } catch (e: Exception) { e.left() }
+        }
+    ) { it.toDomain() }
+
     override fun refreshToken(
         refreshToken: String
     ): Flow<Either<Exception, OAuthToken>> = oauthToken(
@@ -126,6 +160,7 @@ class TipnerdRepositoryImpl(
         scope = DEFAULT_SCOPE
     )
 
+    // TODO The exception wouldn't actually be ApiException
     override fun register(
         username: String,
         name: String,
@@ -154,6 +189,7 @@ class TipnerdRepositoryImpl(
         }
     ) { it.toDomain() }
 
+    // TODO The exception wouldn't actually be ApiException
     override fun resendVerificationEmail(): Flow<Either<Exception, AuthSuccessResult>> =
         networkDataResource(
             fetch = {
