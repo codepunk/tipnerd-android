@@ -89,6 +89,9 @@ android {
             makeKey(suffix = "INTENT")
             makeKey(suffix = "ACCOUNT_AUTHENTICATOR_RESPONSE")
 
+            makeKey(suffix = "AUTH_PREFERENCES")
+            makeKey(suffix = "REFRESH_TOKEN")
+
             makeIntentEntity(
                 type = IntentEntityType.ACTION,
                 suffix = "AUTHENTICATION"
@@ -249,6 +252,9 @@ dependencies {
     implementation(libs.credentials.play.services.auth)
     implementation(libs.credentials)
 
-    // OkHttp Logging interceptor
+    // OkHttp logging interceptor
     implementation(libs.logging.interceptor)
+
+    // Encrypted shared preferences
+    implementation(libs.encrypted.shared.preferences)
 }

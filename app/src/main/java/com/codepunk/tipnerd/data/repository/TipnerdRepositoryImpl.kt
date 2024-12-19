@@ -34,6 +34,7 @@ import com.codepunk.tipnerd.domain.model.OAuthGrantType
 import com.codepunk.tipnerd.domain.model.OAuthToken
 import com.codepunk.tipnerd.domain.model.User
 import com.codepunk.tipnerd.domain.repository.TipnerdRepository
+import com.codepunk.tipnerd.manager.TokenManager
 import com.codepunk.tipnerd.util.exception.ApiException
 import com.codepunk.tipnerd.util.exception.HttpStatusException
 import com.codepunk.tipnerd.util.exception.OauthException
@@ -42,7 +43,8 @@ import kotlinx.coroutines.flow.map
 
 class TipnerdRepositoryImpl(
     private val database: TipnerdDatabase,
-    private val webservice: TipnerdWebservice
+    private val webservice: TipnerdWebservice,
+    private val tokenManager: TokenManager
 ) : TipnerdRepository {
 
     private val userDao: UserDao by lazy { database.userDao() }

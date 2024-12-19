@@ -20,6 +20,7 @@ import com.codepunk.tipnerd.data.local.TipnerdDatabase
 import com.codepunk.tipnerd.data.remote.webservice.TipnerdWebservice
 import com.codepunk.tipnerd.data.repository.TipnerdRepositoryImpl
 import com.codepunk.tipnerd.domain.repository.TipnerdRepository
+import com.codepunk.tipnerd.manager.TokenManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,10 +37,12 @@ class DataModule {
     @Provides
     fun provideTipnerdRepository(
         webservice: TipnerdWebservice,
-        database: TipnerdDatabase
+        database: TipnerdDatabase,
+        tokenManager: TokenManager
     ): TipnerdRepository = TipnerdRepositoryImpl(
         webservice = webservice,
-        database = database
+        database = database,
+        tokenManager = tokenManager
     )
 
     // endregion Methods

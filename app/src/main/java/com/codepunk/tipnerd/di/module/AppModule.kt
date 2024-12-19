@@ -18,8 +18,12 @@ package com.codepunk.tipnerd.di.module
 
 import android.accounts.AccountManager
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import androidx.credentials.CredentialManager
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
+import com.codepunk.tipnerd.BuildConfig
 import com.codepunk.tipnerd.di.qualifier.ApplicationScope
 import com.codepunk.tipnerd.di.qualifier.DefaultDispatcher
 import com.codepunk.tipnerd.di.qualifier.IoDispatcher
@@ -35,6 +39,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -88,6 +93,27 @@ class AppModule {
     @UnconfinedDispatcher
     @Provides
     fun provideUnconfinedDispatcher(): CoroutineDispatcher = Dispatchers.Unconfined
+
+    @Singleton
+    @Provides
+    fun provideMasterKey(@ApplicationContext context: Context): MasterKey =
+        MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+
+    @Singleton
+    @Provides
+    @Named(BuildConfig.KEY_AUTH_PREFERENCES)
+    fun provideEncryptedSharedPreferences(
+        @ApplicationContext context: Context,
+        masterKey: MasterKey
+    ): SharedPreferences = EncryptedSharedPreferences.create(
+        context,
+        BuildConfig.KEY_AUTH_PREFERENCES,
+        masterKey,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
 
     // endregion Methods
 
